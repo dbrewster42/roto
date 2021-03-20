@@ -41,7 +41,6 @@ public class DataManipulator {
                 return Double.compare(o1, o2);
             }
         });
-//        values.stream().forEach(System.out::println);
         List<Integer> ties = new ArrayList<>();
         double previous = -1.0;
         for (double value : values){
@@ -78,21 +77,9 @@ public class DataManipulator {
                     if (each.get(columnNumber).intValue()  == ties.get(i)){
                         each.set(columnNumber, each.get(columnNumber) + 0.5);
                     }
-//                    if (each.get(columnNumber) == Double.valueOf(ties.get(i) + 1)){
-//                        each.set(columnNumber, each.get(columnNumber) - MODIFIER);
-//                    }
                 }
             }
         }
-    }
-    public void applyMultiTies(int columnNumber, List<Integer> multiTies, double modifier){
-//        for (List<Double> each : thePlayers.values()) {
-//            if (each.get(columnNumber).intValue() == ties.get(i)) {
-//                System.out.println("modifying tie at column " + columnNumber + " with the value of " + each.get(columnNumber));
-//                each.set(columnNumber, each.get(columnNumber) + 0.5);
-//                System.out.println("modified tie at column " + columnNumber + " with the updated value of " + each.get(columnNumber));
-//            }
-//        }
     }
 
     public Map<String, Double> calculateScore(Map<String, List<Double>> playerRanks){
@@ -106,13 +93,6 @@ public class DataManipulator {
         }
 
         return ranks;
-//        for (List<Double> player : playerRanks.values()){
-//            double sum = 0;
-//            for (Double score : player){
-//                sum += score;
-//            }
-//            ranks.put()
-//        }
     }
     public Map<String, Double> descMapSort(Map<String, Double> rank){
         //TODO sort map
