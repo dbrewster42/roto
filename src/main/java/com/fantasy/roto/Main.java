@@ -17,7 +17,6 @@ public class Main {
 ////        Map<String, Double> pitchingRanks = reader.readAndRank("pitching.xlsx");
 ////        Map<String, Double> finalTotalRanks = DataManipulator.combineHittingAndPitching(hittingRanks, pitchingRanks);
 //    //        Map<String, Double> finalTotalRanks = DataManipulator.combineHittingAndPitching(hittingRanks, hittingRanks);
-//        //TODO uncomment
 //
 //    }
     public static void main(String[] args) {

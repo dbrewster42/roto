@@ -1,4 +1,4 @@
-package com.fantasy.roto;
+package com.fantasy.roto.model;
 
 import com.ebay.xcelite.annotations.Column;
 

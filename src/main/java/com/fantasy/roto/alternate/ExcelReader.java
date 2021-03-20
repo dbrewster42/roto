@@ -1,15 +1,16 @@
-package com.fantasy.roto;
+package com.fantasy.roto.alternate;
 
 import com.ebay.xcelite.Xcelite;
 import com.ebay.xcelite.reader.SheetReader;
 import com.ebay.xcelite.sheet.XceliteSheet;
+import com.fantasy.roto.model.Roto;
 
 import java.io.File;
 import java.util.Collection;
 
 public class ExcelReader {
     public static void main(String[] args){
-        File file = new File("test2.xlsx");
+        File file = new File("hitting-test.xlsx");
         System.out.println(file.getAbsolutePath());
         System.out.println(file.getParent() + " asdf " + file.getPath());
         Xcelite xcelite = new Xcelite(file);
