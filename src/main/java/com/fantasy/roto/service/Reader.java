@@ -41,10 +41,19 @@ public class Reader {
         for (Map.Entry<String, List<Double>> entry : playerRanks.entrySet()){
             System.out.println(entry.getKey() + " " + entry.getValue().toString());
         }
+        for (int i = 0; i < 6; i++){
+            debugging(playerRanks, i);
+//            playerRanks.values().forEach(v -> sum += v.get(i)).red
+        }
+
         Map<String, Double> playerFinalRank = dataManipulator.calculateScore(playerRanks);
         for (Map.Entry<String, Double> entry : playerFinalRank.entrySet()) {
             System.out.println(entry.getKey() + " - " + entry.getValue());
         }
         return playerFinalRank;
+    }
+    public void debugging(Map<String, List<Double>> playerRanks, int column){
+       double s =  playerRanks.values().stream().map(v -> v.get(column)).reduce(0.0, (sum, v) -> sum += v);
+       System.out.println("COLUMN " + column + " : TOTAL = " + s);
     }
 }

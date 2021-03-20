@@ -46,8 +46,9 @@ public class DataManipulator {
         double previous = -1.0;
         for (double value : values){
             if (previous != -1.0){
-                if (previous % 1 == 0 && previous == value){
-                    ties.add(values.indexOf(previous));
+                //FIXME  doubles should not allow ties ie  if (previous % 1 == 0 && previous == value){
+                if (previous == value){
+                    ties.add(values.indexOf(value) + 1);
                 }
             }
             previous = value;
@@ -59,35 +60,23 @@ public class DataManipulator {
     }
     public void applyTies(int columnNumber, List<Integer> ties){
         for (int i = 0; i < ties.size(); i++){
-            if (i < ties.size() -1 && ties.get(i) == ties.get(i + 1) - 1){
-                List<Integer> multiTies = new ArrayList<>();
-                multiTies.add(i);
+            if (i < ties.size() -1 && ties.get(i) == ties.get(i + 1)){
+                int multiTie = ties.get(i);
                 double specialModifier = .5;
-//                int j = 1;
-                while (ties.get(i) == ties.get(i + 1) - 1){
+                while (i < ties.size() -1 && ties.get(i) == ties.get(i + 1)){
                     specialModifier += .5;
                     i++;
-                    multiTies.add(i);
-                    if (i == ties.size() - 2){
-                        break;
-                    }
                 }
                 for (List<Double> each : thePlayers.values()) {
-                    if (each.get(columnNumber).intValue() == ties.get(i)) {
-                        System.out.println("modifying tie at column " + columnNumber + " with the value of " + each.get(columnNumber));
-                        each.set(columnNumber, each.get(columnNumber) + 0.5);
-                        System.out.println("modified tie at column " + columnNumber + " with the updated value of " + each.get(columnNumber));
+                    if (each.get(columnNumber).intValue() == multiTie) {
+                        each.set(columnNumber, each.get(columnNumber) + specialModifier);
                     }
                 }
-                //applyMultiTies(columnNumber, multiTies, specialModifier);
             }
             else {
-                //each.set(columnNumber, (double) 1 + values.indexOf(each.get(columnNumber)));
                 for (List<Double> each : thePlayers.values()){
                     if (each.get(columnNumber).intValue()  == ties.get(i)){
-                        System.out.println("modifying tie at column " + columnNumber + " with the value of " + each.get(columnNumber));
                         each.set(columnNumber, each.get(columnNumber) + 0.5);
-                        System.out.println("modified tie at column " + columnNumber + " with the updated value of " + each.get(columnNumber));
                     }
 //                    if (each.get(columnNumber) == Double.valueOf(ties.get(i) + 1)){
 //                        each.set(columnNumber, each.get(columnNumber) - MODIFIER);
