@@ -29,12 +29,6 @@ public class DataManipulator {
             rankColumn(i);
         }
         return thePlayers;
-//        List<Integer> stat = new ArrayList<>();
-//        for (Collection<Pitching> player : players){
-////            stat.add(player.);
-//        }
-//
-//        return players;
     }
     public void rankColumn(int columnNumber){
         List<Double> values = new ArrayList<>();
@@ -49,27 +43,69 @@ public class DataManipulator {
         });
 //        values.stream().forEach(System.out::println);
         List<Integer> ties = new ArrayList<>();
-        Double previous = null;
-        //TODO modify ties
-        for (Double value : values){
-            if (previous != null){
-                if (previous == value){
+        double previous = -1.0;
+        for (double value : values){
+            if (previous != -1.0){
+                if (previous % 1 == 0 && previous == value){
                     ties.add(values.indexOf(previous));
-                    System.out.println(columnNumber + " has a tie for the value of " + value);
                 }
-                previous = value;
             }
+            previous = value;
         }
-//        for (int i = 0; i < values.size() - 1; i++){
-//            if (values.get(i) == values.get(i + 1)){
-//                ties.add(i);
-//                System.out.println(i);
-//            }
-//        }
         for (List<Double> each : thePlayers.values()){
             each.set(columnNumber, (double) 1 + values.indexOf(each.get(columnNumber)));
         }
+        applyTies(columnNumber, ties);
     }
+    public void applyTies(int columnNumber, List<Integer> ties){
+        for (int i = 0; i < ties.size(); i++){
+            if (i < ties.size() -1 && ties.get(i) == ties.get(i + 1) - 1){
+                List<Integer> multiTies = new ArrayList<>();
+                multiTies.add(i);
+                double specialModifier = .5;
+//                int j = 1;
+                while (ties.get(i) == ties.get(i + 1) - 1){
+                    specialModifier += .5;
+                    i++;
+                    multiTies.add(i);
+                    if (i == ties.size() - 2){
+                        break;
+                    }
+                }
+                for (List<Double> each : thePlayers.values()) {
+                    if (each.get(columnNumber).intValue() == ties.get(i)) {
+                        System.out.println("modifying tie at column " + columnNumber + " with the value of " + each.get(columnNumber));
+                        each.set(columnNumber, each.get(columnNumber) + 0.5);
+                        System.out.println("modified tie at column " + columnNumber + " with the updated value of " + each.get(columnNumber));
+                    }
+                }
+                //applyMultiTies(columnNumber, multiTies, specialModifier);
+            }
+            else {
+                //each.set(columnNumber, (double) 1 + values.indexOf(each.get(columnNumber)));
+                for (List<Double> each : thePlayers.values()){
+                    if (each.get(columnNumber).intValue()  == ties.get(i)){
+                        System.out.println("modifying tie at column " + columnNumber + " with the value of " + each.get(columnNumber));
+                        each.set(columnNumber, each.get(columnNumber) + 0.5);
+                        System.out.println("modified tie at column " + columnNumber + " with the updated value of " + each.get(columnNumber));
+                    }
+//                    if (each.get(columnNumber) == Double.valueOf(ties.get(i) + 1)){
+//                        each.set(columnNumber, each.get(columnNumber) - MODIFIER);
+//                    }
+                }
+            }
+        }
+    }
+    public void applyMultiTies(int columnNumber, List<Integer> multiTies, double modifier){
+//        for (List<Double> each : thePlayers.values()) {
+//            if (each.get(columnNumber).intValue() == ties.get(i)) {
+//                System.out.println("modifying tie at column " + columnNumber + " with the value of " + each.get(columnNumber));
+//                each.set(columnNumber, each.get(columnNumber) + 0.5);
+//                System.out.println("modified tie at column " + columnNumber + " with the updated value of " + each.get(columnNumber));
+//            }
+//        }
+    }
+
     public Map<String, Double> calculateScore(Map<String, List<Double>> playerRanks){
        Map<String, Double> ranks = new HashMap<>();
         for (Map.Entry<String, List<Double>> player : playerRanks.entrySet()){
@@ -101,6 +137,14 @@ public class DataManipulator {
             entry.setValue(entry.getValue() + pitchingScore);
         }
         return hittingRanks;
+    }
+
+    public Map<String, List<Double>> getThePlayers() {
+        return thePlayers;
+    }
+
+    public void setThePlayers(Map<String, List<Double>> thePlayers) {
+        this.thePlayers = thePlayers;
     }
 
     public Object[] convertToObjectArray(Collection<Collection<Hitting>> players){

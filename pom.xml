@@ -38,6 +38,11 @@
             <artifactId>xcelite</artifactId>
             <version>1.4.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.7.0</version>
+        </dependency>
     </dependencies>
 
 </project>
