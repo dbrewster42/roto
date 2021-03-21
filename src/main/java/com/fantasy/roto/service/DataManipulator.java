@@ -2,6 +2,7 @@ package com.fantasy.roto.service;
 
 import com.fantasy.roto.model.Hitting;
 import com.fantasy.roto.model.Pitching;
+import com.fantasy.roto.model.Player;
 
 import java.util.*;
 
@@ -94,19 +95,53 @@ public class DataManipulator {
 
         return ranks;
     }
-    public Map<String, Double> descMapSort(Map<String, Double> rank){
-        //TODO sort map
-        return rank;
+    public List<Player> createPlayersWithHittingSort(Map<String, Double> rank){
+        List<Player> finalResults = new ArrayList<>();
+        for (Map.Entry<String, Double> each : rank.entrySet()){
+            Player player = new Player(each.getKey(), each.getValue());
+            finalResults.add(player);
+        }
+        Collections.sort(finalResults, new Comparator<Player>() {
+            @Override
+            public int compare(Player o1, Player o2) {
+                return Double.compare(o2.hitting, o1.hitting);
+            }
+        });
+        return finalResults;
+    }
+    public List<Player> addAndSortByPitching(Map<String, Double> rank, List<Player> players){
+        for (Player player : players){
+            player.pitching = rank.get(player.name);
+        }
+        Collections.sort(players, new Comparator<Player>() {
+            @Override
+            public int compare(Player o1, Player o2) {
+                return Double.compare(o2.pitching, o1.pitching);
+            }
+        });
+        return players;
+    }
+    public List<Player> combineHittingAndPitching(List<Player> players){
+        for (Player player : players){
+            player.total = player.hitting + player.pitching;
+        }
+        Collections.sort(players, new Comparator<Player>() {
+            @Override
+            public int compare(Player o1, Player o2) {
+                return Double.compare(o2.total, o1.total);
+            }
+        });
+        return players;
     }
 
-    public static Map<String, Double> combineHittingAndPitching(Map<String, Double> hittingRanks, Map<String, Double> pitchingRanks){
-        for (Map.Entry<String, Double> entry : hittingRanks.entrySet()) {
-            Double pitchingScore = pitchingRanks.get(entry.getKey());
-            System.out.println(entry.getKey() + " - " + entry.getValue() + " + " + pitchingRanks.get(entry.getKey()));
-            entry.setValue(entry.getValue() + pitchingScore);
-        }
-        return hittingRanks;
-    }
+//    public static Map<String, Double> combineHittingAndPitching(Map<String, Double> hittingRanks, Map<String, Double> pitchingRanks){
+//        for (Map.Entry<String, Double> entry : hittingRanks.entrySet()) {
+//            Double pitchingScore = pitchingRanks.get(entry.getKey());
+//            System.out.println(entry.getKey() + " - " + entry.getValue() + " + " + pitchingRanks.get(entry.getKey()));
+//            entry.setValue(entry.getValue() + pitchingScore);
+//        }
+//        return hittingRanks;
+//    }
 
     public Map<String, List<Double>> getThePlayers() {
         return thePlayers;

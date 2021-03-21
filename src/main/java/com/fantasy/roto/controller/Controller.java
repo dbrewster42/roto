@@ -1,6 +1,7 @@
 package com.fantasy.roto.controller;
 
 import com.fantasy.roto.model.Hitting;
+import com.fantasy.roto.model.Player;
 import com.fantasy.roto.service.DataManipulator;
 import com.fantasy.roto.service.Reader;
 
@@ -13,32 +14,47 @@ public class Controller {
 
     public void run(){
         Reader reader = new Reader();
-//        Map<String, Double> hittingRanks = reader.readAndRank("hitting-test.xlsx");
-        Collection<Collection<Hitting>> playerCollections = reader.read("hitting-test.xlsx");
-        Map<String, Double> playerFinalRank =  rank(playerCollections);
+//               Collection<Collection<Hitting>> hittingCollections = reader.read("hitting-test.xlsx");
+        Collection<Collection<Hitting>> hittingCollections = reader.read("batting.xlsx");
+        Map<String, Double> playerFinalHittingRank =  rank(hittingCollections);
+        List<Player> sortedHittingRank = dataManipulator.createPlayersWithHittingSort(playerFinalHittingRank);
+        for (Player player : sortedHittingRank){
+            System.out.println(player.name + " \t " + player.hitting);
+        }
+        System.out.println();
 
+        Collection<Collection<Hitting>> pitchingCollections = reader.read("pitching.xlsx");
+        Map<String, Double> playerFinalPitchingRank = rank(pitchingCollections);
+
+        List<Player> sortedPitchingRank = dataManipulator.addAndSortByPitching(playerFinalPitchingRank, sortedHittingRank);
+        for (Player player : sortedPitchingRank){
+            System.out.println(player.name + " \t " + player.pitching);
+        }
+        System.out.println();
+
+        List<Player> finalPlayerRanks = dataManipulator.combineHittingAndPitching(sortedPitchingRank);
+        for (Player player : finalPlayerRanks){
+            System.out.println(player.name + " \t " + player.total);
+        }
 //        double sum = playerFinalRank.values().stream().reduce(0.0, (s, v) -> s += v);
 //        System.out.println("HITTING TOTAL --------- " + sum);
 
-        //TODO uncomment
-//        Map<String, Double> pitchingRanks = reader.readAndRank("hitting.xlsx");
-//        Map<String, Double> pitchingRanks = reader.readAndRank("pitching.xlsx");
-//        Map<String, Double> finalTotalRanks = DataManipulator.combineHittingAndPitching(hittingRanks, pitchingRanks);
     }
+
     public Map<String, Double> rank(Collection<Collection<Hitting>> playerCollections){
         Map<String, List<Double>> playerStats = dataManipulator.convertToMap(playerCollections);
 
         Map<String, List<Double>> playerRanks = dataManipulator.rankAllColumns();
-        for (Map.Entry<String, List<Double>> entry : playerRanks.entrySet()){
-            System.out.println(entry.getKey() + " " + entry.getValue().toString());
-        }
+//        for (Map.Entry<String, List<Double>> entry : playerRanks.entrySet()){
+//            System.out.println(entry.getKey() + " " + entry.getValue().toString());
+//        }
 //        for (int i = 0; i < 6; i++){
 //            debugging(playerRanks, i);
 //        }
         Map<String, Double> playerFinalRank = dataManipulator.calculateScore(playerRanks);
-        for (Map.Entry<String, Double> entry : playerFinalRank.entrySet()) {
-            System.out.println(entry.getKey() + " - " + entry.getValue());
-        }
+//        for (Map.Entry<String, Double> entry : playerFinalRank.entrySet()) {
+//            System.out.println(entry.getKey() + " - " + entry.getValue());
+//        }
 
         return playerFinalRank;
     }
