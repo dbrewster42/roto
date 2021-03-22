@@ -17,9 +17,7 @@ public class Excel_IO {
     public Excel_IO(String inputFile){
         this.inputFile = inputFile;
     }
-    public Excel_IO(){
-
-    }
+    public Excel_IO(){ }
 
     public Collection<Collection<Hitting>> readSheet(String sheetName) {
         Xcelite xcelite = new Xcelite(new File(inputFile));
@@ -52,6 +50,5 @@ public class Excel_IO {
 //        }
         return simpleReader.read();
     }
-
 
 }
