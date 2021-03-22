@@ -25,7 +25,7 @@ class DataManipulatorTest {
 
     @Test
     void rankColumn() {
-        sut.rankColumn(0);
+        sut.rankColumn(0, false);
         List<Double> rainmakersRanks = new ArrayList<>(Arrays.asList(4.0, 21.0, 20.0));
         assertEquals(sut.getThePlayers().get("rainmaker"), rainmakersRanks);
     }

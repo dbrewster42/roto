@@ -1,11 +1,6 @@
 package com.fantasy.roto;
 
 import com.fantasy.roto.controller.Controller;
-import com.fantasy.roto.service.DataManipulator;
-import com.fantasy.roto.service.Reader;
-import org.checkerframework.checker.units.qual.C;
-
-import java.util.Map;
 
 public class Main {
 //    public static void main(String[] args) {

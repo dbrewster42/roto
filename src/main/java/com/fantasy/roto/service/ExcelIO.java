@@ -8,7 +8,7 @@ import com.fantasy.roto.model.Hitting;
 import java.io.File;
 import java.util.Collection;
 
-public class Reader {
+public class ExcelIO {
 
     public Collection<Collection<Hitting>> read(String filename) {
         Xcelite xcelite = new Xcelite(new File(filename));

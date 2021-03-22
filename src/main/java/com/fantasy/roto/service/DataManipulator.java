@@ -25,23 +25,44 @@ public class DataManipulator {
         return hitters;
     }
 
-    public Map<String, List<Double>> rankAllColumns(){
-        for (int i = 0; i < 6; i++){
-            rankColumn(i);
+    public Map<String, List<Double>> rankAllColumns(boolean isPitching){
+        if (isPitching){
+            for (int i = 0; i < 6; i++){
+                if (i == 3 || i == 4){
+                    rankColumn(i, true);
+                } else {
+                    rankColumn(i, false);
+                }
+            }
+        } else {
+            for (int i = 0; i < 6; i++){
+                rankColumn(i, false);
+            }
         }
+
         return thePlayers;
     }
-    public void rankColumn(int columnNumber){
+    public void rankColumn(int columnNumber, boolean isReversed){
         List<Double> values = new ArrayList<>();
         for (List<Double> each : thePlayers.values()){
             values.add(each.get(columnNumber));
         }
-        values.sort(new Comparator<Double>() {
-            @Override
-            public int compare(Double o1, Double o2) {
-                return Double.compare(o1, o2);
-            }
-        });
+        if (isReversed){
+            values.sort(new Comparator<Double>() {
+                @Override
+                public int compare(Double o1, Double o2) {
+                    return Double.compare(o2, o1);
+                }
+            });
+        } else {
+            values.sort(new Comparator<Double>() {
+                @Override
+                public int compare(Double o1, Double o2) {
+                    return Double.compare(o1, o2);
+                }
+            });
+        }
+
         List<Integer> ties = new ArrayList<>();
         double previous = -1.0;
         for (double value : values){
