@@ -116,6 +116,20 @@ public class DataManipulator {
 
         return ranks;
     }
+    public List<Player> createPlayersWithHitting(Map<String, Double> rank){
+        List<Player> finalResults = new ArrayList<>();
+        for (Map.Entry<String, Double> each : rank.entrySet()){
+            Player player = new Player(each.getKey(), each.getValue());
+            finalResults.add(player);
+        }
+        return finalResults;
+    }
+    public List<Player> addPitching(Map<String, Double> rank, List<Player> players){
+        for (Player player : players){
+            player.pitching = rank.get(player.name);
+        }
+        return players;
+    }
     public List<Player> createPlayersWithHittingSort(Map<String, Double> rank){
         List<Player> finalResults = new ArrayList<>();
         for (Map.Entry<String, Double> each : rank.entrySet()){

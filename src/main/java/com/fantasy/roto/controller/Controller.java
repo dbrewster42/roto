@@ -3,36 +3,25 @@ package com.fantasy.roto.controller;
 import com.fantasy.roto.model.Hitting;
 import com.fantasy.roto.model.Player;
 import com.fantasy.roto.service.DataManipulator;
-import com.fantasy.roto.service.ExcelIO;
+import com.fantasy.roto.service.Excel_IO;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 public class Controller {
     private final DataManipulator dataManipulator = new DataManipulator();
 
     public void run(){
-        ExcelIO excelIO = new ExcelIO();
-//               Collection<Collection<Hitting>> hittingCollections = reader.read("hitting-test.xlsx");
-        Collection<Collection<Hitting>> hittingCollections = excelIO.read("batting.xlsx");
+        Excel_IO excelIO = new Excel_IO("stats.xlsx");
+        Collection<Collection<Hitting>> hittingCollections = excelIO.readSheet("Sheet1");
         Map<String, Double> playerFinalHittingRank =  rank(hittingCollections, false);
+        List<Player> sortedHittingRank = dataManipulator.createPlayersWithHitting(playerFinalHittingRank);
 
-        List<Player> sortedHittingRank = dataManipulator.createPlayersWithHittingSort(playerFinalHittingRank);
-        for (Player player : sortedHittingRank){
-            System.out.println(player.name + " \t " + player.hitting);
-        }
-        System.out.println();
-
-        Collection<Collection<Hitting>> pitchingCollections = excelIO.read("pitching.xlsx");
+        Collection<Collection<Hitting>> pitchingCollections = excelIO.readSheet("Sheet2");
         Map<String, Double> playerFinalPitchingRank = rank(pitchingCollections, true);
+        List<Player> sortedPitchingRank = dataManipulator.addPitching(playerFinalPitchingRank, sortedHittingRank);
 
-        List<Player> sortedPitchingRank = dataManipulator.addAndSortByPitching(playerFinalPitchingRank, sortedHittingRank);
-        for (Player player : sortedPitchingRank){
-            System.out.println(player.name + " \t " + player.pitching);
-        }
-        System.out.println();
 
         List<Player> finalPlayerRanks = dataManipulator.combineHittingAndPitching(sortedPitchingRank);
         for (Player player : finalPlayerRanks){
@@ -42,6 +31,8 @@ public class Controller {
         double total =  finalPlayerRanks.stream().map(v -> v.total).reduce(0.0, (sum, v) -> sum += v);
         System.out.println();
         System.out.println("Total is 1260 : " + total);
+
+        excelIO.write(finalPlayerRanks);
 
     }
 
@@ -69,3 +60,34 @@ public class Controller {
         System.out.println("COLUMN " + column + " : TOTAL = " + s);
     }
 }
+//    public void run(){
+//        Excel_IO excelIO = new Excel_IO();
+////               Collection<Collection<Hitting>> hittingCollections = reader.read("hitting-test.xlsx");
+//        Collection<Collection<Hitting>> hittingCollections = excelIO.read("batting.xlsx");
+//        Map<String, Double> playerFinalHittingRank =  rank(hittingCollections, false);
+//
+//        List<Player> sortedHittingRank = dataManipulator.createPlayersWithHittingSort(playerFinalHittingRank);
+//        for (Player player : sortedHittingRank){
+//            System.out.println(player.name + " \t " + player.hitting);
+//        }
+//        System.out.println();
+//
+//        Collection<Collection<Hitting>> pitchingCollections = excelIO.read("pitching.xlsx");
+//        Map<String, Double> playerFinalPitchingRank = rank(pitchingCollections, true);
+//
+//        List<Player> sortedPitchingRank = dataManipulator.addAndSortByPitching(playerFinalPitchingRank, sortedHittingRank);
+//        for (Player player : sortedPitchingRank){
+//            System.out.println(player.name + " \t " + player.pitching);
+//        }
+//        System.out.println();
+//
+//        List<Player> finalPlayerRanks = dataManipulator.combineHittingAndPitching(sortedPitchingRank);
+//        for (Player player : finalPlayerRanks){
+//            System.out.println(player.name + " \t " + player.total);
+//        }
+//
+//        double total =  finalPlayerRanks.stream().map(v -> v.total).reduce(0.0, (sum, v) -> sum += v);
+//        System.out.println();
+//        System.out.println("Total is 1260 : " + total);
+//
+//    }
