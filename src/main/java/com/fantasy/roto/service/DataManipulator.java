@@ -169,15 +169,6 @@ public class DataManipulator {
         return players;
     }
 
-//    public static Map<String, Double> combineHittingAndPitching(Map<String, Double> hittingRanks, Map<String, Double> pitchingRanks){
-//        for (Map.Entry<String, Double> entry : hittingRanks.entrySet()) {
-//            Double pitchingScore = pitchingRanks.get(entry.getKey());
-//            System.out.println(entry.getKey() + " - " + entry.getValue() + " + " + pitchingRanks.get(entry.getKey()));
-//            entry.setValue(entry.getValue() + pitchingScore);
-//        }
-//        return hittingRanks;
-//    }
-
     public Map<String, List<Double>> getThePlayers() {
         return thePlayers;
     }
@@ -185,35 +176,5 @@ public class DataManipulator {
     public void setThePlayers(Map<String, List<Double>> thePlayers) {
         this.thePlayers = thePlayers;
     }
-
-    public Object[] convertToObjectArray(Collection<Collection<Hitting>> players){
-        Object[] returnValue = new Hitting[14];
-        int count = 0;
-        for (Collection<Hitting> player : players){
-            System.out.println(player.toString());
-            returnValue = player.toArray(new Object[7]);
-            count++;
-        }
-        return returnValue;
-    }
-    public Hitting[] convertToHittingArray(Collection<Collection<Hitting>> players){
-        Map<String, List<Double>> hitters = new HashMap<>();
-        Hitting[] returnValue = new Hitting[14];
-        int count = 0;
-        for (Collection<Hitting> player : players){
-            System.out.println(player.toString());
-            returnValue = player.toArray(new Hitting[count]);
-            count++;
-        }
-        return returnValue;
-    }
-    public Pitching[] convertToPitchingArray(Collection<Collection<Pitching>> players){
-        Pitching[] returnValue = new Pitching[14];
-        for (Collection<Pitching> player : players){
-            returnValue = player.toArray(new Pitching[0]);
-        }
-        return returnValue;
-    }
-
 
 }

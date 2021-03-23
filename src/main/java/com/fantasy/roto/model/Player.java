@@ -18,4 +18,9 @@ public class Player {
         this.name = name;
         this.hitting = hitting;
     }
+    public Player(String name, double hitting, double pitching) {
+        this.name = name;
+        this.hitting = hitting;
+        this.pitching = pitching;
+    }
 }

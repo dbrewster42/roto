@@ -1,5 +1,6 @@
 package com.fantasy.roto.service;
 
+import com.fantasy.roto.model.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,19 +20,39 @@ class DataManipulatorTest {
 //    void convertToMap() {
 //    }
 //
-//    @Test
-//    void rankAllColumns() {
-//    }
+    @Test
+    void rankAllColumnsWithPitching() {
+        sut.rankAllColumns(true);
+        List<Double> rainmakersRanks = new ArrayList<>(Arrays.asList(3.5, 4.0, 3.0, 4.0, 4.0, 4.0));
+        assertEquals(sut.getThePlayers().get("rainmaker"), rainmakersRanks);
+
+        List<Double> joesRanks = new ArrayList<>(Arrays.asList(2.0, 2.0, 1.0, 2.0, 2.0, 1.0));
+        assertEquals(sut.getThePlayers().get("joe"), joesRanks);
+    }
+    @Test
+    void rankAllColumnsWithHitting() {
+        sut.rankAllColumns(false);
+        List<Double> rainmakersRanks = new ArrayList<>(Arrays.asList(3.5, 4.0, 3.0, 1.0, 1.0, 4.0));
+        assertEquals(sut.getThePlayers().get("rainmaker"), rainmakersRanks);
+
+        List<Double> joesRanks = new ArrayList<>(Arrays.asList(2.0, 2.0, 1.0, 3.0, 3.0, 1.0));
+        assertEquals(sut.getThePlayers().get("joe"), joesRanks);
+
+    }
 
     @Test
     void rankColumn() {
         sut.rankColumn(0, false);
-        List<Double> rainmakersRanks = new ArrayList<>(Arrays.asList(4.0, 21.0, 20.0));
+        List<Double> rainmakersRanks = new ArrayList<>(Arrays.asList(3.5, 21.0, 20.0, 0.5, 0.5, 20.0));
         assertEquals(sut.getThePlayers().get("rainmaker"), rainmakersRanks);
     }
 
     @Test
     void calculateScore() {
+        Map<String, Double> ranks = sut.calculateScore(generateMapOfRanks());
+
+        assertEquals(ranks.get("rainmaker"), 22.5);
+        assertEquals(ranks.get("joe"), 10.0);
     }
 
     @Test
@@ -39,16 +60,43 @@ class DataManipulatorTest {
     }
 
     @Test
-    void combineHittingAndPitching() {
+    void combineHittingAndPitchingIsRanked() {
+        List<Player> players = generatePlayersList();
+        sut.combineHittingAndPitching(players);
+        assertEquals("rainmaker", players.get(0).name);
+        assertEquals(51, players.get(0).total);
+        assertEquals("osiris", players.get(1).name);
+        assertEquals(43.5, players.get(1).total);
+        assertEquals(42.5, players.get(2).total);
     }
 
+    List<Player> generatePlayersList(){
+        List<Player> players = new ArrayList<>();
+        Player player1 = new Player("rainmaker", 26, 25);
+        Player player2 = new Player("joe", 21, 20);
+        Player player3 = new Player("scar", 15, 27.5);
+        Player player4 = new Player("osiris", 25, 18.5);
+        players.add(player1);
+        players.add(player2);
+        players.add(player3);
+        players.add(player4);
+        return players;
+    }
+
+    Map<String, List<Double>> generateMapOfRanks(){
+        Map<String, List<Double>> thePlayers = new HashMap<>();
+        thePlayers.put("rainmaker", new ArrayList<Double>(Arrays.asList(3.5, 4.0, 3.0, 4.0, 4.0, 4.0)));
+        thePlayers.put("joe", new ArrayList<>(Arrays.asList(2.0, 2.0, 1.0, 2.0, 2.0, 1.0)));
+        thePlayers.put("scar", new ArrayList<Double>(Arrays.asList(3.5, 3.0, 4.0, 1.0, 1.0, 2.0)));
+        thePlayers.put("other", new ArrayList<Double>(Arrays.asList(1.0, 1.0, 1.0, 3.0, 3.0, 3.0)));
+        return thePlayers;
+    }
     Map<String, List<Double>> generateMap(){
         Map<String, List<Double>> thePlayers = new HashMap<>();
-//        List<Double> values = new
-        thePlayers.put("rainmaker", new ArrayList<Double>(Arrays.asList(20.0, 21.0, 20.0)));
-        thePlayers.put("joe", new ArrayList<>(Arrays.asList(10.0, 9.0, 10.0)));
-        thePlayers.put("scar", new ArrayList<Double>(Arrays.asList(20.0, 20.0, 22.0)));
-        thePlayers.put("other", new ArrayList<Double>(Arrays.asList(8.0, 8.0, 12.0)));
+        thePlayers.put("rainmaker", new ArrayList<Double>(Arrays.asList(20.0, 21.0, 20.0, .5, .5, 20.0)));
+        thePlayers.put("joe", new ArrayList<>(Arrays.asList(10.0, 9.0, 10.0, .6, .627, 15.0)));
+        thePlayers.put("scar", new ArrayList<Double>(Arrays.asList(20.0, 20.0, 22.0, .7, .63, 17.0)));
+        thePlayers.put("other", new ArrayList<Double>(Arrays.asList(8.0, 8.0, 12.0, .55, .523, 19.0)));
         return thePlayers;
     }
 }
