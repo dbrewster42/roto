@@ -25,6 +25,21 @@ public class DataManipulator {
         return hitters;
     }
 
+    public List<Player> convertToPlayerList(Collection<Collection<Player>> players){
+        List<Player> playerList = new ArrayList<>();
+//        for (Collection<Player> player : players){
+//            arr = player.toArray(new Object[7]);
+//            List<Double> values = new ArrayList<>();
+//            String key = (String) arr[0];
+//            for (int i = 1; i < 7; i++){
+//                values.add((Double) arr[i]);
+//            }
+//            hitters.put(key, values);
+//        }
+//        thePlayers = hitters;
+        return playerList;
+    }
+
     public Map<String, List<Double>> rankAllColumns(boolean isPitching){
         if (isPitching){
             for (int i = 0; i < 6; i++){

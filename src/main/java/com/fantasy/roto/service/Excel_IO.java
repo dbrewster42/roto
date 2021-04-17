@@ -27,9 +27,19 @@ public class Excel_IO {
         return simpleReader.read();
     }
 
-    public void write(List<Player> players){
+    public Collection<Collection<Player>> readLastWeeksTotal(String sheetName) {
+        Xcelite xcelite = new Xcelite(new File(inputFile));
+        XceliteSheet sheet = xcelite.getSheet(sheetName);
+
+        SheetReader<Collection<Player>> simpleReader = sheet.getBeanReader(Player.class);
+//        simpleReader.hasHeaderRow();
+
+        return simpleReader.read();
+    }
+
+    public void write(List<Player> players, String sheetName){
         Xcelite xcelite = new Xcelite();
-        XceliteSheet sheet = xcelite.createSheet("results_sheet");
+        XceliteSheet sheet = xcelite.createSheet(sheetName);
 
         //SheetWriter<List<Player>>
         SheetWriter<Player> writer = sheet.getBeanWriter(Player.class);
@@ -51,4 +61,11 @@ public class Excel_IO {
         return simpleReader.read();
     }
 
+    public String getInputFile() {
+        return inputFile;
+    }
+
+    public void setInputFile(String inputFile) {
+        this.inputFile = inputFile;
+    }
 }

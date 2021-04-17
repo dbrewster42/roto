@@ -12,7 +12,7 @@ import java.util.Map;
 public class Controller {
     private final DataManipulator dataManipulator = new DataManipulator();
 
-    public void run(){
+    public void run(int weekNumber){
         Excel_IO excelIO = new Excel_IO("stats.xlsx");
         Collection<Collection<Hitting>> hittingCollections = excelIO.readSheet("Sheet1");
         Map<String, Double> playerFinalHittingRank =  rank(hittingCollections, false);
@@ -25,14 +25,26 @@ public class Controller {
 
         List<Player> finalPlayerRanks = dataManipulator.combineHittingAndPitching(sortedPitchingRank);
         for (Player player : finalPlayerRanks){
-            System.out.println(player.name + " \t " + player.total);
+            System.out.println(player.name + " \t " + player.total + " \t " + player.pitching + " \t " + player.hitting);
         }
 
         double total =  finalPlayerRanks.stream().map(v -> v.total).reduce(0.0, (sum, v) -> sum += v);
         System.out.println();
         System.out.println("Total is 1260 : " + total);
 
-        excelIO.write(finalPlayerRanks);
+        compareToLastWeek(finalPlayerRanks, weekNumber);
+
+        excelIO.write(finalPlayerRanks, "Week" + weekNumber);
+
+    }
+
+    public void compareToLastWeek(List<Player> finalPlayerRanks, int weekNumber){
+        int lastWeek = weekNumber - 1;
+
+        Excel_IO excelIO = new Excel_IO("results.xlsx");
+        Collection<Collection<Player>> lastWeeksTotal = excelIO.readLastWeeksTotal("Week" + lastWeek);
+
+        List<Player> lastWeeksRanks = dataManipulator.convertToPlayerList(lastWeeksTotal);
 
     }
 
