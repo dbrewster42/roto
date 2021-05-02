@@ -31,7 +31,7 @@ public class Excel_IO {
         Xcelite xcelite = new Xcelite(new File(inputFile));
         XceliteSheet sheet = xcelite.getSheet(sheetName);
 
-        SheetReader<Collection<Player>> simpleReader = sheet.getBeanReader(Player.class);
+        SheetReader<Collection<Player>> simpleReader = sheet.getSimpleReader();
 //        simpleReader.hasHeaderRow();
 
         return simpleReader.read();

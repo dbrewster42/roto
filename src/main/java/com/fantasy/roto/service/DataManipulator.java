@@ -25,18 +25,43 @@ public class DataManipulator {
         return hitters;
     }
 
-    public List<Player> convertToPlayerList(Collection<Collection<Player>> players){
+    public List<Player> convertToPlayerList(Collection<Collection<Player>> collectionOfPlayers){
         List<Player> playerList = new ArrayList<>();
-//        for (Collection<Player> player : players){
-//            arr = player.toArray(new Object[7]);
-//            List<Double> values = new ArrayList<>();
-//            String key = (String) arr[0];
-//            for (int i = 1; i < 7; i++){
-//                values.add((Double) arr[i]);
+        boolean isFirst = true;
+        for (Collection<Player> playerCollection : collectionOfPlayers){
+            System.out.println(playerCollection);
+//            for (int i = 1; i < playerCollection.size(); i++){
+//                playerList.add(playerCollection);
 //            }
-//            hitters.put(key, values);
-//        }
-//        thePlayers = hitters;
+            if (isFirst){
+                isFirst = false;
+                continue;
+            } else {
+                int count = 1;
+                Player player = new Player();
+                for (Object playerInfo : playerCollection){
+                    switch (count){
+                        case 1:
+                            player.name = (String) playerInfo;
+                            break;
+                        case 2:
+                            player.total = (double) playerInfo;
+                            break;
+                        case 3:
+                            player.hitting = (double) playerInfo;
+                            break;
+                        case 4:
+                            player.pitching = (double) playerInfo;
+                            break;
+                    }
+                    count++;
+                }
+                playerList.add(player);
+            }
+
+        }
+
+//        collectionOfPlayers.stream().flatMap(v -> v.stream()).forEach(playerList::add);
         return playerList;
     }
 
@@ -183,6 +208,30 @@ public class DataManipulator {
         });
         return players;
     }
+
+//    public void calculateChange(List<Player> lastWeeksRanks, List<Player> finalPlayerRanks){
+//        for (Player player : finalPlayerRanks){
+//            double oldTotal;
+//            if (lastWeeksRanks.get(0).name.equals(player.name)){
+//                oldTotal = lastWeeksRanks.get(0).total;
+//                lastWeeksRanks.remove(0);
+//            } else {
+//                oldTotal = lastWeeksRanks.stream().filter(v -> v.name.equals(player.name)).map(v -> v.total).findAny().orElse(-100.0);
+//            }
+//            player.totalChange = player.total - oldTotal;
+//        }
+//    }
+public void calculateChange(List<Player> lastWeeksRanks, List<Player> finalPlayerRanks){
+    for (Player player : finalPlayerRanks){
+        Player oldPlayer = lastWeeksRanks.get(0);
+        if (!oldPlayer.name.equals(player.name)){
+            oldPlayer = lastWeeksRanks.stream().filter(v -> v.name.equals(player.name)).findAny().orElse(null);
+        }
+        player.totalChange = player.total - oldPlayer.total;
+        player.hittingChange = player.hitting - oldPlayer.hitting;
+        player.pitchingChange = player.pitching - oldPlayer.pitching;
+    }
+}
 
     public Map<String, List<Double>> getThePlayers() {
         return thePlayers;

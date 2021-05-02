@@ -99,4 +99,15 @@ class DataManipulatorTest {
         thePlayers.put("other", new ArrayList<Double>(Arrays.asList(8.0, 8.0, 12.0, .55, .523, 19.0)));
         return thePlayers;
     }
+
+    @Test
+    void convertToPlayerList(){
+        Excel_IO reader = new Excel_IO();
+        reader.setInputFile("results.xlsx");
+        Collection<Collection<Player>> lastWeek = reader.readLastWeeksTotal("Week3");
+
+        List<Player> players = sut.convertToPlayerList(lastWeek);
+        players.stream().forEach(System.out::println);
+        assertEquals(players.size(), 14);
+    }
 }

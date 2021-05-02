@@ -13,7 +13,7 @@ public class Controller {
     private final DataManipulator dataManipulator = new DataManipulator();
 
     public void run(int weekNumber){
-        Excel_IO excelIO = new Excel_IO("stats.xlsx");
+        Excel_IO excelIO = new Excel_IO("stats2.xlsx");
         Collection<Collection<Hitting>> hittingCollections = excelIO.readSheet("Sheet1");
         Map<String, Double> playerFinalHittingRank =  rank(hittingCollections, false);
         List<Player> sortedHittingRank = dataManipulator.createPlayersWithHitting(playerFinalHittingRank);
@@ -25,7 +25,7 @@ public class Controller {
 
         List<Player> finalPlayerRanks = dataManipulator.combineHittingAndPitching(sortedPitchingRank);
         for (Player player : finalPlayerRanks){
-            System.out.println(player.name + " \t " + player.total + " \t " + player.pitching + " \t " + player.hitting);
+            System.out.println(player.name + " \t " + player.total + " \t " + player.hitting + " \t " + player.pitching);
         }
 
         double total =  finalPlayerRanks.stream().map(v -> v.total).reduce(0.0, (sum, v) -> sum += v);
@@ -45,6 +45,8 @@ public class Controller {
         Collection<Collection<Player>> lastWeeksTotal = excelIO.readLastWeeksTotal("Week" + lastWeek);
 
         List<Player> lastWeeksRanks = dataManipulator.convertToPlayerList(lastWeeksTotal);
+
+        dataManipulator.calculateChange(lastWeeksRanks, finalPlayerRanks);
 
     }
 
