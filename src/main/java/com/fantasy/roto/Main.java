@@ -5,7 +5,7 @@ import com.fantasy.roto.controller.Controller;
 public class Main {
     public static void main(String[] args) {
         Controller controller = new Controller();
-        int week = 4;
+        int week = 12;
         controller.run(week);
     }
 }

@@ -68,7 +68,7 @@ public class DataManipulator {
     public Map<String, List<Double>> rankAllColumns(boolean isPitching){
         if (isPitching){
             for (int i = 0; i < 6; i++){
-                if (i == 3 || i == 4){
+                if (i == 2 || i == 3){
                     rankColumn(i, true);
                 } else {
                     rankColumn(i, false);

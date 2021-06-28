@@ -18,6 +18,11 @@ public class Controller {
         Map<String, Double> playerFinalHittingRank =  rank(hittingCollections, false);
         List<Player> sortedHittingRank = dataManipulator.createPlayersWithHitting(playerFinalHittingRank);
 
+//        for (Player each : sortedHittingRank){
+//            System.out.println(each.name + " - " + each.);
+//        }
+
+
         Collection<Collection<Hitting>> pitchingCollections = excelIO.readSheet("Sheet2");
         Map<String, Double> playerFinalPitchingRank = rank(pitchingCollections, true);
         List<Player> sortedPitchingRank = dataManipulator.addPitching(playerFinalPitchingRank, sortedHittingRank);
@@ -54,16 +59,16 @@ public class Controller {
         Map<String, List<Double>> playerStats = dataManipulator.convertToMap(playerCollections);
 
         Map<String, List<Double>> playerRanks = dataManipulator.rankAllColumns(isPitching);
-//        for (Map.Entry<String, List<Double>> entry : playerRanks.entrySet()){
-//            System.out.println(entry.getKey() + " " + entry.getValue().toString());
-//        }
+        for (Map.Entry<String, List<Double>> entry : playerRanks.entrySet()){
+            System.out.println(entry.getKey() + " " + entry.getValue().toString());
+        }
 //        for (int i = 0; i < 6; i++){
 //            debugging(playerRanks, i);
 //        }
         Map<String, Double> playerFinalRank = dataManipulator.calculateScore(playerRanks);
-//        for (Map.Entry<String, Double> entry : playerFinalRank.entrySet()) {
-//            System.out.println(entry.getKey() + " - " + entry.getValue());
-//        }
+        for (Map.Entry<String, Double> entry : playerFinalRank.entrySet()) {
+            System.out.println(entry.getKey() + " - " + entry.getValue());
+        }
 
         return playerFinalRank;
     }
