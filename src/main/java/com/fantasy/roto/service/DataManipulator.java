@@ -29,7 +29,7 @@ public class DataManipulator {
         List<Player> playerList = new ArrayList<>();
         boolean isFirst = true;
         for (Collection<Player> playerCollection : collectionOfPlayers){
-            System.out.println(playerCollection);
+//            System.out.println(playerCollection);
 //            for (int i = 1; i < playerCollection.size(); i++){
 //                playerList.add(playerCollection);
 //            }
@@ -209,6 +209,23 @@ public class DataManipulator {
         return players;
     }
 
+    public void addPosition(List<Player> players){
+        for (int i = 0; i < players.size(); i++){
+            double start = i + 1;
+            int ties = 0;
+            while (i + ties + 1 < players.size() && players.get(i).total == players.get(i + 1 + ties).total){
+                start += .5;
+                ties++;
+            }
+            players.get(i).rank = start;
+            while (ties > 0){
+                i++;
+                players.get(i).rank = start;
+                ties--;
+            }
+            start++;
+        }
+    }
 //    public void calculateChange(List<Player> lastWeeksRanks, List<Player> finalPlayerRanks){
 //        for (Player player : finalPlayerRanks){
 //            double oldTotal;

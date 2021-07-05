@@ -19,6 +19,8 @@ public class Player {
     public double hittingChange;
     @Column
     public double pitchingChange;
+    @Column
+    public double rank;
 
     public Player(){}
 

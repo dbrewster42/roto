@@ -32,10 +32,10 @@ public class Controller {
         for (Player player : finalPlayerRanks){
             System.out.println(player.name + " \t " + player.total + " \t " + player.hitting + " \t " + player.pitching);
         }
-
-        double total =  finalPlayerRanks.stream().map(v -> v.total).reduce(0.0, (sum, v) -> sum += v);
-        System.out.println();
-        System.out.println("Total is 1260 : " + total);
+        dataManipulator.addPosition(finalPlayerRanks);
+//        double total =  finalPlayerRanks.stream().map(v -> v.total).reduce(0.0, (sum, v) -> sum += v);
+//        System.out.println();
+//        System.out.println("Total is 1260 : " + total);
 
         compareToLastWeek(finalPlayerRanks, weekNumber);
 

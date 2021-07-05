@@ -110,4 +110,59 @@ class DataManipulatorTest {
         players.stream().forEach(System.out::println);
         assertEquals(players.size(), 14);
     }
+
+    @Test
+    void addPosition(){
+        List<Player> players = generatePlayersWithRanks();
+        sut.addPosition(players);
+        players.stream().peek(v -> System.out.println(v.name + " - " + v.rank));
+
+        assertEquals(players.get(0).rank, 1);
+        assertEquals(players.get(1).rank, 2.5);
+        assertEquals(players.get(2).rank, 2.5);
+        assertEquals(players.get(3).rank, 5);
+        assertEquals(players.get(4).rank, 5);
+        assertEquals(players.get(6).rank, 7);
+    }
+
+    List<Player> generatePlayersWithRanks(){
+        List<Player> playerList = new ArrayList<>();
+        Player player = new Player();
+        player.name = "rainmaker";
+        player.total = 115.5;
+
+        Player player2 = new Player();
+        player2.name = "scar";
+        player2.total = 113;
+
+        Player player3 = new Player();
+        player3.name = "dj";
+        player3.total = 113;
+
+        Player player4 = new Player();
+        player4.name = "asdf";
+        player4.total = 77;
+
+        Player player5 = new Player();
+        player5.name = "djj";
+        player5.total = 77;
+
+        Player player6 = new Player();
+        player6.name = "qwert";
+        player6.total = 77;
+
+        Player player7 = new Player();
+        player7.name = "loser";
+        player7.total = 76.5;
+
+        playerList.add(player);
+        playerList.add(player2);
+        playerList.add(player3);
+        playerList.add(player4);
+        playerList.add(player5);
+        playerList.add(player6);
+        playerList.add(player7);
+
+        return playerList;
+    }
 }
