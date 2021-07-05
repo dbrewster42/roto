@@ -6,6 +6,8 @@ import com.ebay.xcelite.annotations.Row;
 @Row(colsOrder = {"name", "total", "hitting", "pitching", "totalChange", "hittingChange", "pitchingChange"})
 public class Player {
     @Column
+    public double rank;
+    @Column
     public String name;
     @Column
     public double total;
@@ -19,8 +21,6 @@ public class Player {
     public double hittingChange;
     @Column
     public double pitchingChange;
-    @Column
-    public double rank;
 
     public Player(){}
 
