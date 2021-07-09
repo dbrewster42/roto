@@ -32,7 +32,6 @@ public class Excel_IO {
         XceliteSheet sheet = xcelite.getSheet(sheetName);
 
         SheetReader<Collection<Player>> simpleReader = sheet.getSimpleReader();
-//        simpleReader.hasHeaderRow();
 
         return simpleReader.read();
     }
@@ -41,7 +40,6 @@ public class Excel_IO {
         Xcelite xcelite = new Xcelite();
         XceliteSheet sheet = xcelite.createSheet(sheetName);
 
-        //SheetWriter<List<Player>>
         SheetWriter<Player> writer = sheet.getBeanWriter(Player.class);
 
         writer.write(players);

@@ -56,12 +56,12 @@ public class Controller {
     }
 
     public Map<String, Double> rank(Collection<Collection<Hitting>> playerCollections, boolean isPitching){
-        Map<String, List<Double>> playerStats = dataManipulator.convertToMap(playerCollections);
-
+//        Map<String, List<Double>> playerStats = dataManipulator.convertToMap(playerCollections);
+        dataManipulator.convertToMap(playerCollections);
         Map<String, List<Double>> playerRanks = dataManipulator.rankAllColumns(isPitching);
-        for (Map.Entry<String, List<Double>> entry : playerRanks.entrySet()){
-            System.out.println(entry.getKey() + " " + entry.getValue().toString());
-        }
+//        for (Map.Entry<String, List<Double>> entry : playerRanks.entrySet()){
+//            System.out.println(entry.getKey() + " " + entry.getValue().toString());
+//        }
 //        for (int i = 0; i < 6; i++){
 //            debugging(playerRanks, i);
 //        }
