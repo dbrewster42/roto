@@ -1,6 +1,5 @@
 package com.fantasy.roto.controller;
 
-import com.fantasy.roto.model.Hitting;
 import com.fantasy.roto.model.Player;
 import com.fantasy.roto.service.DataManipulator;
 import com.fantasy.roto.service.Excel_IO;
@@ -14,7 +13,8 @@ public class Controller {
 
     public void run(int weekNumber){
         Excel_IO excelIO = new Excel_IO("stats2.xlsx");
-        Collection<Collection<Hitting>> hittingCollections = excelIO.readSheet("Sheet1");
+        Collection<Collection<Player>> hittingCollections = excelIO.readSheet("Sheet1");
+
         Map<String, Double> playerFinalHittingRank =  rank(hittingCollections, false);
         List<Player> sortedHittingRank = dataManipulator.createPlayersWithHitting(playerFinalHittingRank);
 
@@ -23,7 +23,7 @@ public class Controller {
 //        }
 
 
-        Collection<Collection<Hitting>> pitchingCollections = excelIO.readSheet("Sheet2");
+        Collection<Collection<Player>> pitchingCollections = excelIO.readSheet("Sheet2");
         Map<String, Double> playerFinalPitchingRank = rank(pitchingCollections, true);
         List<Player> sortedPitchingRank = dataManipulator.addPitching(playerFinalPitchingRank, sortedHittingRank);
 
@@ -47,7 +47,7 @@ public class Controller {
         int lastWeek = weekNumber - 1;
 
         Excel_IO excelIO = new Excel_IO("results.xlsx");
-        Collection<Collection<Player>> lastWeeksTotal = excelIO.readLastWeeksTotal("Week" + lastWeek);
+        Collection<Collection<Player>> lastWeeksTotal = excelIO.readSheet("Week" + lastWeek);
 
         List<Player> lastWeeksRanks = dataManipulator.convertToPlayerList(lastWeeksTotal);
 
@@ -55,7 +55,7 @@ public class Controller {
 
     }
 
-    public Map<String, Double> rank(Collection<Collection<Hitting>> playerCollections, boolean isPitching){
+    public Map<String, Double> rank(Collection<Collection<Player>> playerCollections, boolean isPitching){
 //        Map<String, List<Double>> playerStats = dataManipulator.convertToMap(playerCollections);
         dataManipulator.convertToMap(playerCollections);
         Map<String, List<Double>> playerRanks = dataManipulator.rankAllColumns(isPitching);

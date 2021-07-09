@@ -1,7 +1,5 @@
 package com.fantasy.roto.service;
 
-import com.fantasy.roto.model.Hitting;
-import com.fantasy.roto.model.Pitching;
 import com.fantasy.roto.model.Player;
 
 import java.util.*;
@@ -9,10 +7,10 @@ import java.util.*;
 public class DataManipulator {
     Map<String, List<Double>> thePlayers;
 
-    public Map<String, List<Double>> convertToMap(Collection<Collection<Hitting>> players){
+    public Map<String, List<Double>> convertToMap(Collection<Collection<Player>> players){
         Map<String, List<Double>> hitters = new HashMap<>();
         Object[] arr;
-        for (Collection<Hitting> player : players){
+        for (Collection<Player> player : players){
             arr = player.toArray(new Object[7]);
             List<Double> values = new ArrayList<>();
             String key = (String) arr[0];
