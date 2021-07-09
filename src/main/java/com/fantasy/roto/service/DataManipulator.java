@@ -1,7 +1,5 @@
 package com.fantasy.roto.service;
 
-import com.fantasy.roto.model.Hitting;
-import com.fantasy.roto.model.Pitching;
 import com.fantasy.roto.model.Player;
 
 import java.util.*;
@@ -9,10 +7,10 @@ import java.util.*;
 public class DataManipulator {
     Map<String, List<Double>> thePlayers;
 
-    public Map<String, List<Double>> convertToMap(Collection<Collection<Hitting>> players){
+    public Map<String, List<Double>> convertToMap(Collection<Collection<Player>> players){
         Map<String, List<Double>> hitters = new HashMap<>();
         Object[] arr;
-        for (Collection<Hitting> player : players){
+        for (Collection<Player> player : players){
             arr = player.toArray(new Object[7]);
             List<Double> values = new ArrayList<>();
             String key = (String) arr[0];
@@ -25,10 +23,50 @@ public class DataManipulator {
         return hitters;
     }
 
+    public List<Player> convertToPlayerList(Collection<Collection<Player>> collectionOfPlayers){
+        List<Player> playerList = new ArrayList<>();
+        boolean isFirst = true;
+        for (Collection<Player> playerCollection : collectionOfPlayers){
+//            System.out.println(playerCollection);
+//            for (int i = 1; i < playerCollection.size(); i++){
+//                playerList.add(playerCollection);
+//            }
+            if (isFirst){
+                isFirst = false;
+                continue;
+            } else {
+                int count = 1;
+                Player player = new Player();
+                for (Object playerInfo : playerCollection){
+                    switch (count){
+                        case 1:
+                            player.name = (String) playerInfo;
+                            break;
+                        case 2:
+                            player.total = (double) playerInfo;
+                            break;
+                        case 3:
+                            player.hitting = (double) playerInfo;
+                            break;
+                        case 4:
+                            player.pitching = (double) playerInfo;
+                            break;
+                    }
+                    count++;
+                }
+                playerList.add(player);
+            }
+
+        }
+
+//        collectionOfPlayers.stream().flatMap(v -> v.stream()).forEach(playerList::add);
+        return playerList;
+    }
+
     public Map<String, List<Double>> rankAllColumns(boolean isPitching){
         if (isPitching){
             for (int i = 0; i < 6; i++){
-                if (i == 3 || i == 4){
+                if (i == 2 || i == 3){
                     rankColumn(i, true);
                 } else {
                     rankColumn(i, false);
@@ -167,6 +205,54 @@ public class DataManipulator {
             }
         });
         return players;
+    }
+
+    public void addPosition(List<Player> players){
+        for (int i = 0; i < players.size(); i++){
+            double start = i + 1;
+            int ties = 0;
+            while (i + ties + 1 < players.size() && players.get(i).total == players.get(i + 1 + ties).total){
+                start += .5;
+                ties++;
+            }
+            players.get(i).rank = start;
+            while (ties > 0){
+                i++;
+                players.get(i).rank = start;
+                ties--;
+            }
+            start++;
+        }
+    }
+//    public void calculateChange(List<Player> lastWeeksRanks, List<Player> finalPlayerRanks){
+//        for (Player player : finalPlayerRanks){
+//            double oldTotal;
+//            if (lastWeeksRanks.get(0).name.equals(player.name)){
+//                oldTotal = lastWeeksRanks.get(0).total;
+//                lastWeeksRanks.remove(0);
+//            } else {
+//                oldTotal = lastWeeksRanks.stream().filter(v -> v.name.equals(player.name)).map(v -> v.total).findAny().orElse(-100.0);
+//            }
+//            player.totalChange = player.total - oldTotal;
+//        }
+//    }
+    public void calculateChange(List<Player> lastWeeksRanks, List<Player> finalPlayerRanks){
+        for (Player player : finalPlayerRanks){
+            Player oldPlayer = lastWeeksRanks.get(0);
+            if (!oldPlayer.name.equals(player.name)){
+                oldPlayer = lastWeeksRanks.stream().filter(v -> v.name.equals(player.name)).findAny().orElse(null);
+            }
+            player.totalChange = player.total - oldPlayer.total;
+            player.hittingChange = player.hitting - oldPlayer.hitting;
+            player.pitchingChange = player.pitching - oldPlayer.pitching;
+        }
+    }
+    public void calculateChange(List<Player> finalPlayerRanks){
+        for (Player player : finalPlayerRanks){
+            player.totalChange = 0;
+            player.hittingChange = 0;
+            player.pitchingChange = 0;
+        }
     }
 
     public Map<String, List<Double>> getThePlayers() {
