@@ -236,17 +236,24 @@ public class DataManipulator {
 //            player.totalChange = player.total - oldTotal;
 //        }
 //    }
-public void calculateChange(List<Player> lastWeeksRanks, List<Player> finalPlayerRanks){
-    for (Player player : finalPlayerRanks){
-        Player oldPlayer = lastWeeksRanks.get(0);
-        if (!oldPlayer.name.equals(player.name)){
-            oldPlayer = lastWeeksRanks.stream().filter(v -> v.name.equals(player.name)).findAny().orElse(null);
+    public void calculateChange(List<Player> lastWeeksRanks, List<Player> finalPlayerRanks){
+        for (Player player : finalPlayerRanks){
+            Player oldPlayer = lastWeeksRanks.get(0);
+            if (!oldPlayer.name.equals(player.name)){
+                oldPlayer = lastWeeksRanks.stream().filter(v -> v.name.equals(player.name)).findAny().orElse(null);
+            }
+            player.totalChange = player.total - oldPlayer.total;
+            player.hittingChange = player.hitting - oldPlayer.hitting;
+            player.pitchingChange = player.pitching - oldPlayer.pitching;
         }
-        player.totalChange = player.total - oldPlayer.total;
-        player.hittingChange = player.hitting - oldPlayer.hitting;
-        player.pitchingChange = player.pitching - oldPlayer.pitching;
     }
-}
+    public void calculateChange(List<Player> finalPlayerRanks){
+        for (Player player : finalPlayerRanks){
+            player.totalChange = 0;
+            player.hittingChange = 0;
+            player.pitchingChange = 0;
+        }
+    }
 
     public Map<String, List<Double>> getThePlayers() {
         return thePlayers;

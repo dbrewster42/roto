@@ -45,14 +45,19 @@ public class Controller {
 
     public void compareToLastWeek(List<Player> finalPlayerRanks, int weekNumber){
         int lastWeek = weekNumber - 1;
+        try {
 
-        Excel_IO excelIO = new Excel_IO("results.xlsx");
-        Collection<Collection<Player>> lastWeeksTotal = excelIO.readSheet("Week" + lastWeek);
+            Excel_IO excelIO = new Excel_IO("results.xlsx");
 
-        List<Player> lastWeeksRanks = dataManipulator.convertToPlayerList(lastWeeksTotal);
+            Collection<Collection<Player>> lastWeeksTotal = excelIO.readSheet("Week" + lastWeek);
 
-        dataManipulator.calculateChange(lastWeeksRanks, finalPlayerRanks);
+            List<Player> lastWeeksRanks = dataManipulator.convertToPlayerList(lastWeeksTotal);
 
+            dataManipulator.calculateChange(lastWeeksRanks, finalPlayerRanks);
+        } catch (Exception e){
+            System.out.println("Error calculating change from last week - " + e);
+//            dataManipulator.calculateChange(finalPlayerRanks);
+        }
     }
 
     public Map<String, Double> rank(Collection<Collection<Player>> playerCollections, boolean isPitching){

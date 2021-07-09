@@ -44,6 +44,8 @@ public class Excel_IO {
 
         writer.write(players);
         xcelite.write(new File("results.xlsx"));
+
+        System.out.println("done");
     }
 
     public Collection<Collection<Hitting>> read(String filename) {
