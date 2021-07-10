@@ -27,13 +27,8 @@ public class DataManipulator {
         List<Player> playerList = new ArrayList<>();
         boolean isFirst = true;
         for (Collection<Player> playerCollection : collectionOfPlayers){
-//            System.out.println(playerCollection);
-//            for (int i = 1; i < playerCollection.size(); i++){
-//                playerList.add(playerCollection);
-//            }
             if (isFirst){
                 isFirst = false;
-                continue;
             } else {
                 int count = 1;
                 Player player = new Player();
@@ -51,6 +46,8 @@ public class DataManipulator {
                         case 4:
                             player.pitching = (double) playerInfo;
                             break;
+                        default:
+                            throw new RuntimeException("extra columns");
                     }
                     count++;
                 }
@@ -59,18 +56,13 @@ public class DataManipulator {
 
         }
 
-//        collectionOfPlayers.stream().flatMap(v -> v.stream()).forEach(playerList::add);
         return playerList;
     }
 
     public Map<String, List<Double>> rankAllColumns(boolean isPitching){
         if (isPitching){
             for (int i = 0; i < 6; i++){
-                if (i == 2 || i == 3){
-                    rankColumn(i, true);
-                } else {
-                    rankColumn(i, false);
-                }
+                rankColumn(i, i == 2 || i == 3);
             }
         } else {
             for (int i = 0; i < 6; i++){
@@ -117,6 +109,7 @@ public class DataManipulator {
         }
         applyTies(columnNumber, ties);
     }
+
     public void applyTies(int columnNumber, List<Integer> ties){
         for (int i = 0; i < ties.size(); i++){
             if (i < ties.size() -1 && ties.get(i) == ties.get(i + 1)){
@@ -192,6 +185,7 @@ public class DataManipulator {
                 return Double.compare(o2.pitching, o1.pitching);
             }
         });
+//        int compare = (Player o1, Player o2) -> Double.compare(o2.pitching, o1.pitching);;
         return players;
     }
     public List<Player> combineHittingAndPitching(List<Player> players){
@@ -224,34 +218,14 @@ public class DataManipulator {
             start++;
         }
     }
-//    public void calculateChange(List<Player> lastWeeksRanks, List<Player> finalPlayerRanks){
-//        for (Player player : finalPlayerRanks){
-//            double oldTotal;
-//            if (lastWeeksRanks.get(0).name.equals(player.name)){
-//                oldTotal = lastWeeksRanks.get(0).total;
-//                lastWeeksRanks.remove(0);
-//            } else {
-//                oldTotal = lastWeeksRanks.stream().filter(v -> v.name.equals(player.name)).map(v -> v.total).findAny().orElse(-100.0);
-//            }
-//            player.totalChange = player.total - oldTotal;
-//        }
-//    }
+
     public void calculateChange(List<Player> lastWeeksRanks, List<Player> finalPlayerRanks){
         for (Player player : finalPlayerRanks){
-            Player oldPlayer = lastWeeksRanks.get(0);
-            if (!oldPlayer.name.equals(player.name)){
-                oldPlayer = lastWeeksRanks.stream().filter(v -> v.name.equals(player.name)).findAny().orElse(null);
-            }
+            Player oldPlayer = lastWeeksRanks.stream().filter(v -> v.name.equals(player.name)).findAny()
+                    .orElseThrow(() -> new RuntimeException("Player not found"));
             player.totalChange = player.total - oldPlayer.total;
             player.hittingChange = player.hitting - oldPlayer.hitting;
             player.pitchingChange = player.pitching - oldPlayer.pitching;
-        }
-    }
-    public void calculateChange(List<Player> finalPlayerRanks){
-        for (Player player : finalPlayerRanks){
-            player.totalChange = 0;
-            player.hittingChange = 0;
-            player.pitchingChange = 0;
         }
     }
 
