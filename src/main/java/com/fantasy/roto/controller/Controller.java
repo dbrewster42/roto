@@ -49,9 +49,9 @@ public class Controller {
             Excel_IO excelIO = new Excel_IO("results.xlsx");
 
             Collection<Collection<Player>> lastWeeksTotal = excelIO.readSheet("Week" + lastWeek);
-
+            System.out.println("Sheet has been read ------------------- ");
             List<Player> lastWeeksRanks = dataManipulator.convertToPlayerList(lastWeeksTotal);
-
+            System.out.println("Sheet has been converted into Player List ***************** ");
             dataManipulator.calculateChange(lastWeeksRanks, finalPlayerRanks);
         } catch (Exception e){
             System.out.println("Error calculating change from last week - " + e);

@@ -35,19 +35,22 @@ public class DataManipulator {
                 for (Object playerInfo : playerCollection){
                     switch (count){
                         case 1:
-                            player.name = (String) playerInfo;
+                            player.rank = (double) playerInfo;
                             break;
                         case 2:
-                            player.total = (double) playerInfo;
+                            player.name = (String) playerInfo;
                             break;
                         case 3:
-                            player.hitting = (double) playerInfo;
+                            player.total = (double) playerInfo;
                             break;
                         case 4:
+                            player.hitting = (double) playerInfo;
+                            break;
+                        case 5:
                             player.pitching = (double) playerInfo;
                             break;
                         default:
-                            throw new RuntimeException("extra columns");
+                            continue;
                     }
                     count++;
                 }
