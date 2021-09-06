@@ -232,6 +232,24 @@ public class DataManipulator {
         }
     }
 
+    public void rankPitchingPoints(List<Player> playerRanks){
+        Collections.sort(playerRanks, new Comparator<Player>() {
+            @Override
+            public int compare(Player o1, Player o2) {
+                return Double.compare(o2.pitching, o1.pitching);
+            }
+        });
+    }
+
+    public void rankHittingPoints(List<Player> playerRanks){
+        Collections.sort(playerRanks, new Comparator<Player>() {
+            @Override
+            public int compare(Player o1, Player o2) {
+                return Double.compare(o2.hitting, o1.hitting);
+            }
+        });
+    }
+
     public Map<String, List<Double>> getThePlayers() {
         return thePlayers;
     }

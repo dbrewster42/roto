@@ -7,6 +7,7 @@ import com.fantasy.roto.service.Excel_IO;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Controller {
     private final DataManipulator dataManipulator = new DataManipulator();
@@ -42,6 +43,12 @@ public class Controller {
 
     }
 
+//    public void writeEachRank(int weekNumber){
+////        Excel_IO excelIO = new Excel_IO("stats.xlsx");
+//        sortAndRankEachCategory()
+////        excelIO.write(finalPlayerRanks, "Week" + weekNumber);
+//    }
+
     public void compareToLastWeek(List<Player> finalPlayerRanks, int weekNumber){
         int lastWeek = weekNumber - 1;
         try {
@@ -56,6 +63,26 @@ public class Controller {
         } catch (Exception e){
             System.out.println("Error calculating change from last week - " + e);
 //            dataManipulator.calculateChange(finalPlayerRanks);
+        }
+    }
+
+    public void sortAndRankEachCategory(int lastWeek){
+        try {
+
+            Excel_IO excelIO = new Excel_IO("results.xlsx");
+
+            Collection<Collection<Player>> lastWeeksTotal = excelIO.readSheet("Week" + lastWeek);
+            System.out.println("Sheet has been read ------------------- ");
+            List<Player> playerRanks = dataManipulator.convertToPlayerList(lastWeeksTotal);
+            System.out.println("Sheet has been converted into Player List ***************** ");
+            dataManipulator.rankHittingPoints(playerRanks);
+            AtomicInteger count = new AtomicInteger(0);
+            playerRanks.forEach(v -> System.out.println(count.incrementAndGet() + ". " + v.name + " - " + v.hitting));
+            count.set(0);
+            dataManipulator.rankPitchingPoints(playerRanks);
+            playerRanks.forEach(v -> System.out.println(count.incrementAndGet() + ". " + v.name + " - " + v.pitching));
+        }catch (Exception e){
+            System.out.println("Error ranking each cat - " + e);
         }
     }
 
