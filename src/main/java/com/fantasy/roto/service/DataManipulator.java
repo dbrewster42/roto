@@ -2,6 +2,7 @@ package com.fantasy.roto.service;
 
 import com.fantasy.roto.exception.PlayerNotFound;
 import com.fantasy.roto.model.Player;
+import org.checkerframework.checker.nullness.Opt;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -237,31 +238,48 @@ public class DataManipulator {
             }
         }
         if (!unmatchedPlayers.isEmpty()){
-            if (unmatchedPlayers.size() == 1){
-                Player oldPlayer = lastWeeksRanks.stream().filter(v -> v.totalChange == .11).findAny()
-                        .orElseThrow(() -> new PlayerNotFound("Player really not found"));
-                calculateChangeInPlayer(unmatchedPlayers.get(0), oldPlayer);
-            } else {
-                estimateAllUnmatchedPlayers(unmatchedPlayers, lastWeeksRanks);
+            resolveUnmatchedPlayers(unmatchedPlayers, lastWeeksRanks);
+        }
+//            if (unmatchedPlayers.size() == 1){
+//                Player oldPlayer = lastWeeksRanks.stream().filter(v -> v.totalChange == .11).findAny()
+//                        .orElseThrow(() -> new PlayerNotFound("Player really not found"));
+//                calculateChangeInPlayer(unmatchedPlayers.get(0), oldPlayer);
+//            } else {
+//                estimateAllUnmatchedPlayers(unmatchedPlayers, lastWeeksRanks);
+//            }
+//        }
+    }
+
+
+    private void resolveUnmatchedPlayers(List<Player> unmatchedPlayers, List<Player> lastWeeksRanks){
+//        if (unmatchedPlayers.size() == 1){
+//            Optional<Player> oldPlayer = lastWeeksRanks.stream().filter(v -> v.totalChange == .11).findAny();
+//            oldPlayer.ifPresent(o -> calculateChangeInPlayer(unmatchedPlayers.get(0), o));
+//        }
+        if (unmatchedPlayers.size() == 1){
+            List<Player> lastWeekUnknowns = lastWeeksRanks.stream().filter(v -> v.totalChange == .11).collect(Collectors.toList());
+            if (lastWeekUnknowns.size() == 1){
+                calculateChangeInPlayer(unmatchedPlayers.get(0), lastWeekUnknowns.get(0));
             }
         }
     }
 
-    private void estimateAllUnmatchedPlayers(List<Player> unmatchedPlayers, List<Player> lastWeeksRanks){
-        List<Player> lastWeekUnknowns = lastWeeksRanks.stream().filter(v -> v.totalChange == .11).collect(Collectors.toList());
-        rankPitchingPoints(lastWeekUnknowns);
-        rankPitchingPoints(unmatchedPlayers);
-        for (int i = 0; i < unmatchedPlayers.size(); i++){
-            Player player = unmatchedPlayers.get(i);
-            calculateChangeInPlayer(player, lastWeekUnknowns.get(i));
-            player.totalChange += .11;
-        }
-    }
+//    private void estimateAllUnmatchedPlayers(List<Player> unmatchedPlayers, List<Player> lastWeeksRanks){
+//        List<Player> lastWeekUnknowns = lastWeeksRanks.stream().filter(v -> v.totalChange == .11).collect(Collectors.toList());
+//        rankPitchingPoints(lastWeekUnknowns);
+//        rankPitchingPoints(unmatchedPlayers);
+//        for (int i = 0; i < unmatchedPlayers.size(); i++){
+//            Player player = unmatchedPlayers.get(i);
+//            calculateChangeInPlayer(player, lastWeekUnknowns.get(i));
+//            player.totalChange += .11;
+//        }
+//    }
 
     private void calculateChangeInPlayer(Player player, Player oldPlayer){
         player.totalChange = player.total - oldPlayer.total;
         player.hittingChange = player.hitting - oldPlayer.hitting;
         player.pitchingChange = player.pitching - oldPlayer.pitching;
+        oldPlayer.totalChange = player.total - oldPlayer.total;
     }
 
     private Player findPlayer(Player player, List<Player> lastWeeksRanks){
