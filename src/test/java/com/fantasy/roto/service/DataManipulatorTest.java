@@ -40,15 +40,15 @@ class DataManipulatorTest {
         assertEquals(players.get(1).totalChange, .11);
     }
 
-//    @Test
-//    void rankAllColumnsWithPitching() {
-//        sut.rankAllColumns(true);
-//        List<Double> rainmakersRanks = new ArrayList<>(Arrays.asList(3.5, 4.0, 2.0, 4.0, 1.0, 4.0));
-//        assertEquals(sut.getThePlayers().get("rainmaker"), rainmakersRanks);
-//
-//        List<Double> joesRanks = new ArrayList<>(Arrays.asList(2.0, 2.0, 1.0, 2.0, 2.0, 1.0));
-//        assertEquals(sut.getThePlayers().get("joe"), joesRanks);
-//    }
+    @Test
+    void rankAllColumnsWithPitching() {
+        sut.rankAllColumns(true);
+        List<Double> rainmakersRanks = new ArrayList<>(Arrays.asList(3.5, 4.0, 2.0, 4.0, 1.0, 4.0));
+        assertEquals(sut.getThePlayers().get("rainmaker"), rainmakersRanks);
+
+        List<Double> joesRanks = new ArrayList<>(Arrays.asList(2.0, 2.0, 4.0, 2.0, 3.0, 1.0));
+        assertEquals(sut.getThePlayers().get("joe"), joesRanks);
+    }
     @Test
     void rankAllColumnsWithHitting() {
         sut.rankAllColumns(false);
