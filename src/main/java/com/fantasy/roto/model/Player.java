@@ -16,7 +16,7 @@ public class Player {
     @Column
     public double pitching;
     @Column
-    public double totalChange;
+    public double totalChange = .11;
     @Column
     public double hittingChange;
     @Column

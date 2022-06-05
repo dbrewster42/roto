@@ -21,12 +21,32 @@ class DataManipulatorTest {
 //    }
 //
     @Test
+    void calculateChangeWithDifferentName(){
+        List<Player> players = sut.combineHittingAndPitching(generateOneOffPlayersList());
+        sut.calculateChange(sut.combineHittingAndPitching(generatePlayersList()), players);
+
+        assertEquals(players.get(0).totalChange, 2);
+        assertEquals(players.get(0).name, "bobby");
+        Player joe = players.stream().filter(v -> v.name.equals("joe")).findAny().orElse(null);
+        assertEquals(joe.totalChange, -4);
+    }
+
+    @Test
+    void calculateChangeIgnoresIfMultipleMismatches(){
+        List<Player> players = generateTwoOffPlayersList();
+        sut.calculateChange(generatePlayersList(), players);
+
+        assertEquals(players.get(0).totalChange, .11);
+        assertEquals(players.get(1).totalChange, .11);
+    }
+
+    @Test
     void rankAllColumnsWithPitching() {
         sut.rankAllColumns(true);
         List<Double> rainmakersRanks = new ArrayList<>(Arrays.asList(3.5, 4.0, 2.0, 4.0, 1.0, 4.0));
         assertEquals(sut.getThePlayers().get("rainmaker"), rainmakersRanks);
 
-        List<Double> joesRanks = new ArrayList<>(Arrays.asList(2.0, 2.0, 1.0, 2.0, 2.0, 1.0));
+        List<Double> joesRanks = new ArrayList<>(Arrays.asList(2.0, 2.0, 4.0, 2.0, 3.0, 1.0));
         assertEquals(sut.getThePlayers().get("joe"), joesRanks);
     }
     @Test
@@ -80,6 +100,25 @@ class DataManipulatorTest {
         players.add(player2);
         players.add(player3);
         players.add(player4);
+        return players;
+    }
+
+    List<Player> generateOneOffPlayersList(){
+        List<Player> players = generatePlayersList();
+        Player changedPlayer = players.get(0);
+        changedPlayer.name = "bobby";
+        changedPlayer.hitting = 28;
+        players.get(1).hitting = 19;
+        players.get(1).pitching = 18;
+        players.get(2).pitching = 29.5;
+
+        return players;
+    }
+
+    List<Player> generateTwoOffPlayersList(){
+        List<Player> players = generateOneOffPlayersList();
+        players.get(1).name = "james";
+
         return players;
     }
 
