@@ -23,7 +23,7 @@ class Excel_IOTest {
      @Test
      void readLastWeeksTotal() {
           sut.setInputFile("results.xlsx");
-          Collection<Collection<Player>> lastWeek = sut.readSheet("Week3");
+          Collection<Collection<Player>> lastWeek = sut.readSheet("Week8");
           assertNotNull(lastWeek);
      }
 

@@ -19,10 +19,6 @@ public class Controller {
         Map<String, Double> playerFinalHittingRank =  rank(hittingCollections, false);
         List<Player> sortedHittingRank = dataManipulator.createPlayersWithHitting(playerFinalHittingRank);
 
-//        for (Player each : sortedHittingRank){
-//            System.out.println(each.name + " - " + each.);
-//        }
-
 
         Collection<Collection<Player>> pitchingCollections = excelIO.readSheet("Sheet2");
         Map<String, Double> playerFinalPitchingRank = rank(pitchingCollections, true);
@@ -102,6 +98,27 @@ public class Controller {
 //        }
 
         return playerFinalRank;
+    }
+
+    public void compareRanks(int week){
+        try {
+
+            Excel_IO excelOld = new Excel_IO("compare.xlsx");
+
+            Excel_IO excelCurrent = new Excel_IO("results.xlsx");
+
+            Collection<Collection<Player>> lastWeeksTotal = excelOld.readSheet("Sheet");
+            System.out.println("Sheet has been read ------------------- ");
+            List<Player> lastWeeksRanks = dataManipulator.convertToPlayerList(lastWeeksTotal);
+            System.out.println("Sheet has been converted into Player List ***************** ");
+
+            List<Player> currentRanks = dataManipulator.convertToPlayerList(excelCurrent.readSheet("Sheet" + --week));
+
+            dataManipulator.calculateChange(lastWeeksRanks, currentRanks);
+        } catch (Exception e){
+            System.out.println("Error calculating change from last week - " + e);
+//            dataManipulator.calculateChange(finalPlayerRanks);
+        }
     }
 
 
