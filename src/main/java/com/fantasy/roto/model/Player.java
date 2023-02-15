@@ -3,7 +3,7 @@ package com.fantasy.roto.model;
 import com.ebay.xcelite.annotations.Column;
 import com.ebay.xcelite.annotations.Row;
 
-@Row(colsOrder = {"rank", "name", "total", "hitting", "pitching", "totalChange", "hittingChange", "pitchingChange"})
+@Row(colsOrder = {"rank", "name", "total", "hitting", "pitching", "space", "totalChange", "hittingChange", "pitchingChange"})
 public class Player {
     @Column
     public double rank;
@@ -21,6 +21,8 @@ public class Player {
     public double hittingChange;
     @Column
     public double pitchingChange;
+    @Column
+    public final String space = null;
 
     public Player(){}
 

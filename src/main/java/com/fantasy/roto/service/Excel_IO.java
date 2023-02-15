@@ -1,10 +1,11 @@
 package com.fantasy.roto.service;
 
 import com.ebay.xcelite.Xcelite;
+import com.ebay.xcelite.options.XceliteOptions;
+import com.ebay.xcelite.policies.MissingCellPolicy;
 import com.ebay.xcelite.reader.SheetReader;
 import com.ebay.xcelite.sheet.XceliteSheet;
 import com.ebay.xcelite.writer.SheetWriter;
-import com.fantasy.roto.model.Hitting;
 import com.fantasy.roto.model.Player;
 
 import java.io.File;
@@ -19,13 +20,6 @@ public class Excel_IO {
     }
     public Excel_IO(){ }
 
-//    public Collection<Collection<Hitting>> readSheet(String sheetName) {
-//        Xcelite xcelite = new Xcelite(new File(inputFile));
-//        XceliteSheet sheet = xcelite.getSheet(sheetName);
-//
-//        SheetReader<Collection<Hitting>> simpleReader = sheet.getSimpleReader();
-//        return simpleReader.read();
-//    }
 
     public Collection<Collection<Player>> readSheet(String sheetName) {
         Xcelite xcelite = new Xcelite(new File(inputFile));
@@ -38,6 +32,10 @@ public class Excel_IO {
 
     public void write(List<Player> players, String sheetName){
         Xcelite xcelite = new Xcelite();
+        XceliteOptions xceliteOptions = xcelite.getOptions();
+        xceliteOptions.setMissingCellPolicy(MissingCellPolicy.RETURN_NULL_AND_BLANK);
+//        xceliteOptions.setMissingRowPolicy();
+//        XceliteOptions.first
         XceliteSheet sheet = xcelite.createSheet(sheetName);
 
         SheetWriter<Player> writer = sheet.getBeanWriter(Player.class);
@@ -48,18 +46,6 @@ public class Excel_IO {
         System.out.println("done");
     }
 
-    public Collection<Collection<Hitting>> read(String filename) {
-        Xcelite xcelite = new Xcelite(new File(filename));
-
-        XceliteSheet sheet = xcelite.getSheet("Sheet1");
-
-        SheetReader<Collection<Hitting>> simpleReader = sheet.getSimpleReader();
-//        if (simpleReader.hasHeaderRow()){
-//            System.out.println("skipping");
-//            simpleReader.skipHeaderRow(true);
-//        }
-        return simpleReader.read();
-    }
 
     public String getInputFile() {
         return inputFile;

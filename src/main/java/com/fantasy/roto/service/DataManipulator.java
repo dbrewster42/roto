@@ -2,10 +2,14 @@ package com.fantasy.roto.service;
 
 import com.fantasy.roto.exception.PlayerNotFound;
 import com.fantasy.roto.model.Player;
-import org.checkerframework.checker.nullness.Opt;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DataManipulator {
     Map<String, List<Double>> thePlayers;
@@ -84,19 +88,9 @@ public class DataManipulator {
             values.add(each.get(columnNumber));
         }
         if (isReversed){
-            values.sort(new Comparator<Double>() {
-                @Override
-                public int compare(Double o1, Double o2) {
-                    return Double.compare(o2, o1);
-                }
-            });
+            values.sort((o1, o2) -> Double.compare(o2, o1));
         } else {
-            values.sort(new Comparator<Double>() {
-                @Override
-                public int compare(Double o1, Double o2) {
-                    return Double.compare(o1, o2);
-                }
-            });
+            values.sort(Double::compare);
         }
 
         List<Integer> ties = new ArrayList<>();
@@ -185,28 +179,18 @@ public class DataManipulator {
         for (Player player : players){
             player.pitching = rank.get(player.name);
         }
-        Collections.sort(players, new Comparator<Player>() {
-            @Override
-            public int compare(Player o1, Player o2) {
-                return Double.compare(o2.pitching, o1.pitching);
-            }
-        });
-//        int compare = (Player o1, Player o2) -> Double.compare(o2.pitching, o1.pitching);;
+        players.sort((o1, o2) -> Double.compare(o2.pitching, o1.pitching));
         return players;
     }
     public List<Player> combineHittingAndPitching(List<Player> players){
         for (Player player : players){
             player.total = player.hitting + player.pitching;
         }
-        Collections.sort(players, new Comparator<Player>() {
-            @Override
-            public int compare(Player o1, Player o2) {
-                return Double.compare(o2.total, o1.total);
-            }
-        });
+        players.sort((o1, o2) -> Double.compare(o2.total, o1.total));
         return players;
     }
 
+    //todo looks funny. want to recheck this
     public void addPosition(List<Player> players){
         for (int i = 0; i < players.size(); i++){
             double start = i + 1;
@@ -229,7 +213,7 @@ public class DataManipulator {
         List<Player> unmatchedPlayers = new ArrayList<>();
         for (Player player : finalPlayerRanks){
             try {
-                Player oldPlayer =lastWeeksRanks.stream().filter(v -> v.name.equals(player.name)).findAny()
+                Player oldPlayer = lastWeeksRanks.stream().filter(v -> v.name.equals(player.name)).findAny()
                         .orElseThrow(() -> new PlayerNotFound("Player not found"));
                 calculateChangeInPlayer(player, oldPlayer);
             } catch (Exception e){
@@ -240,28 +224,20 @@ public class DataManipulator {
         if (!unmatchedPlayers.isEmpty()){
             resolveUnmatchedPlayers(unmatchedPlayers, lastWeeksRanks);
         }
-//            if (unmatchedPlayers.size() == 1){
-//                Player oldPlayer = lastWeeksRanks.stream().filter(v -> v.totalChange == .11).findAny()
-//                        .orElseThrow(() -> new PlayerNotFound("Player really not found"));
-//                calculateChangeInPlayer(unmatchedPlayers.get(0), oldPlayer);
-//            } else {
-//                estimateAllUnmatchedPlayers(unmatchedPlayers, lastWeeksRanks);
-//            }
-//        }
     }
 
 
     private void resolveUnmatchedPlayers(List<Player> unmatchedPlayers, List<Player> lastWeeksRanks){
-//        if (unmatchedPlayers.size() == 1){
-//            Optional<Player> oldPlayer = lastWeeksRanks.stream().filter(v -> v.totalChange == .11).findAny();
-//            oldPlayer.ifPresent(o -> calculateChangeInPlayer(unmatchedPlayers.get(0), o));
-//        }
         if (unmatchedPlayers.size() == 1){
-            List<Player> lastWeekUnknowns = lastWeeksRanks.stream().filter(v -> v.totalChange == .11).collect(Collectors.toList());
-            if (lastWeekUnknowns.size() == 1){
-                calculateChangeInPlayer(unmatchedPlayers.get(0), lastWeekUnknowns.get(0));
-            }
+           lastWeeksRanks.stream().filter(v -> v.totalChange == .11).findAny()
+                   .ifPresent(o -> calculateChangeInPlayer(unmatchedPlayers.get(0), o));
         }
+//        if (unmatchedPlayers.size() == 1){
+//            List<Player> lastWeekUnknowns = lastWeeksRanks.stream().filter(v -> v.totalChange == .11).collect(Collectors.toList());
+//            if (lastWeekUnknowns.size() == 1){
+//                calculateChangeInPlayer(unmatchedPlayers.get(0), lastWeekUnknowns.get(0));
+//            }
+//        }
     }
 
 //    private void estimateAllUnmatchedPlayers(List<Player> unmatchedPlayers, List<Player> lastWeeksRanks){
@@ -282,27 +258,12 @@ public class DataManipulator {
         oldPlayer.totalChange = player.total - oldPlayer.total;
     }
 
-    private Player findPlayer(Player player, List<Player> lastWeeksRanks){
-        return lastWeeksRanks.stream().filter(v -> v.name.equals(player.name)).findAny()
-                .orElseThrow(() -> new PlayerNotFound("Player not found"));
-    }
-
     public void rankPitchingPoints(List<Player> playerRanks){
-        Collections.sort(playerRanks, new Comparator<Player>() {
-            @Override
-            public int compare(Player o1, Player o2) {
-                return Double.compare(o2.pitching, o1.pitching);
-            }
-        });
+        playerRanks.sort((o1, o2) -> Double.compare(o2.pitching, o1.pitching));
     }
 
     public void rankHittingPoints(List<Player> playerRanks){
-        Collections.sort(playerRanks, new Comparator<Player>() {
-            @Override
-            public int compare(Player o1, Player o2) {
-                return Double.compare(o2.hitting, o1.hitting);
-            }
-        });
+        playerRanks.sort((o1, o2) -> Double.compare(o2.hitting, o1.hitting));
     }
 
     public Map<String, List<Double>> getThePlayers() {

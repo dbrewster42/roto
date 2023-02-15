@@ -46,6 +46,7 @@ public class Controller {
 //    }
 
     public void compareToLastWeek(List<Player> finalPlayerRanks, int weekNumber){
+        if (weekNumber == 1) { return; }
         int lastWeek = weekNumber - 1;
         try {
 
