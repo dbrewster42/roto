@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class Controller {
-    private final DataManipulator dataManipulator = new DataManipulator();
+    private final DataManipulator service = new DataManipulator();
     private Excel_IO excelIO;
 
 
@@ -21,25 +21,26 @@ public class Controller {
 
         Collection<Collection<Player>> hittingCollections = excelIO.readSheet("Sheet1");
         Map<String, Double> playerFinalHittingRank =  rank(hittingCollections, false);
-        List<Player> sortedHittingRank = dataManipulator.createPlayersWithHitting(playerFinalHittingRank);
+        List<Player> players = service.createPlayersWithHitting(playerFinalHittingRank);
 
         Collection<Collection<Player>> pitchingCollections = excelIO.readSheet("Sheet2");
         Map<String, Double> playerFinalPitchingRank = rank(pitchingCollections, true);
-        List<Player> sortedPitchingRank = dataManipulator.addPitching(playerFinalPitchingRank, sortedHittingRank);
+        service.addPitching(playerFinalPitchingRank, players);
 
-        List<Player> finalPlayerRanks = dataManipulator.combineHittingAndPitching(sortedPitchingRank);
+        List<Player> finalPlayers = service.calculateTotal(players);
+        service.sortTotal(finalPlayers);
 //        for (Player player : finalPlayerRanks){
 //            System.out.println(player.name + " \t " + player.total + " \t " + player.hitting + " \t " + player.pitching);
 //        }
-        dataManipulator.addPosition(finalPlayerRanks);
-//        double total =  finalPlayerRanks.stream().map(v -> v.total).reduce(0.0, (sum, v) -> sum += v);
+        service.calculateRank(finalPlayers);
+//        double total =  sortedPlayers.stream().map(v -> v.total).reduce(0.0, (sum, v) -> sum += v);
 //        System.out.println();
 //        System.out.println("Total is 1260 : " + total);
 
-        compareToLastWeek(finalPlayerRanks);
+        compareToLastWeek(finalPlayers);
 
-        excelIO.writeRoto(finalPlayerRanks);
-        excelIO.writeRanks(dataManipulator.convertToRank(sortedHittingRank, sortedPitchingRank));
+        excelIO.writeRoto(finalPlayers);
+        excelIO.writeRanks(service.convertToRank(players));
     }
     private void printRanks(List<Player> sortedHitters, List<Player> sortedPitchers) {
         AtomicInteger count = new AtomicInteger(0);
@@ -79,10 +80,10 @@ public class Controller {
         try {
             Excel_IO excelIO = new Excel_IO("results.xlsx");
 
-            List<Player> lastWeeksRanks = dataManipulator.convertToPlayerList(excelIO.readSheet("Sheet"));
+            List<Player> lastWeeksRanks = service.convertToPlayerList(excelIO.readSheet("Sheet"));
             System.out.println("Sheet has been converted into Player List ***************** ");
 
-            dataManipulator.calculateChange(lastWeeksRanks, finalPlayerRanks);
+            service.calculateChange(lastWeeksRanks, finalPlayerRanks);
         } catch (Exception e){
             System.out.println("Error while calculating changes from last week - " + e);
         }
@@ -95,13 +96,13 @@ public class Controller {
 
             Collection<Collection<Player>> lastWeeksTotal = excelIO.readSheet("Week" + lastWeek);
             System.out.println("Sheet has been read ------------------- ");
-            List<Player> playerRanks = dataManipulator.convertToPlayerList(lastWeeksTotal);
+            List<Player> playerRanks = service.convertToPlayerList(lastWeeksTotal);
             System.out.println("Sheet has been converted into Player List ***************** ");
-            dataManipulator.rankHittingPoints(playerRanks);
+            service.sortHitting(playerRanks);
             AtomicInteger count = new AtomicInteger(0);
             playerRanks.forEach(v -> System.out.println(count.incrementAndGet() + ". " + v.name + " - " + v.hitting));
             count.set(0);
-            dataManipulator.rankPitchingPoints(playerRanks);
+            service.sortPitching(playerRanks);
             playerRanks.forEach(v -> System.out.println(count.incrementAndGet() + ". " + v.name + " - " + v.pitching));
         }catch (Exception e){
             System.out.println("Error ranking each cat - " + e);
@@ -110,15 +111,15 @@ public class Controller {
 
     public Map<String, Double> rank(Collection<Collection<Player>> playerCollections, boolean isPitching){
 //        Map<String, List<Double>> playerStats = dataManipulator.convertToMap(playerCollections);
-        dataManipulator.convertToMap(playerCollections);
-        Map<String, List<Double>> playerRanks = dataManipulator.rankAllColumns(isPitching);
+        service.convertToMap(playerCollections);
+        Map<String, List<Double>> playerRanks = service.rankAllColumns(isPitching);
 //        for (Map.Entry<String, List<Double>> entry : playerRanks.entrySet()){
 //            System.out.println(entry.getKey() + " " + entry.getValue().toString());
 //        }
 //        for (int i = 0; i < 6; i++){
 //            debugging(playerRanks, i);
 //        }
-        Map<String, Double> playerFinalRank = dataManipulator.calculateScore(playerRanks);
+        Map<String, Double> playerFinalRank = service.calculateScore(playerRanks);
 //        for (Map.Entry<String, Double> entry : playerFinalRank.entrySet()) {
 //            System.out.println(entry.getKey() + " - " + entry.getValue());
 //        }
@@ -135,12 +136,12 @@ public class Controller {
 
             Collection<Collection<Player>> lastWeeksTotal = excelOld.readSheet("Sheet");
             System.out.println("Sheet has been read ------------------- ");
-            List<Player> lastWeeksRanks = dataManipulator.convertToPlayerList(lastWeeksTotal);
+            List<Player> lastWeeksRanks = service.convertToPlayerList(lastWeeksTotal);
             System.out.println("Sheet has been converted into Player List ***************** ");
 
-            List<Player> currentRanks = dataManipulator.convertToPlayerList(excelCurrent.readSheet("Sheet" + --week));
+            List<Player> currentRanks = service.convertToPlayerList(excelCurrent.readSheet("Sheet" + --week));
 
-            dataManipulator.calculateChange(lastWeeksRanks, currentRanks);
+            service.calculateChange(lastWeeksRanks, currentRanks);
         } catch (Exception e){
             System.out.println("Error calculating change from last week - " + e);
 //            dataManipulator.calculateChange(finalPlayerRanks);

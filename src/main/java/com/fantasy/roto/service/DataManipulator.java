@@ -6,11 +6,10 @@ import com.fantasy.roto.model.Rank;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DataManipulator {
     Map<String, List<Double>> thePlayers;
@@ -35,36 +34,35 @@ public class DataManipulator {
         List<Player> playerList = new ArrayList<>();
         boolean isFirst = true;
         for (Collection<Player> playerCollection : collectionOfPlayers){
+            if (playerCollection == null) { break;}
             if (isFirst){
                 isFirst = false;
-            } else {
-                int count = 1;
-                Player player = new Player();
-                for (Object playerInfo : playerCollection){
-                    switch (count){
-                        case 1:
-                            player.rank = (double) playerInfo;
-                            break;
-                        case 2:
-                            player.name = (String) playerInfo;
-                            break;
-                        case 3:
-                            player.total = (double) playerInfo;
-                            break;
-                        case 4:
-                            player.hitting = (double) playerInfo;
-                            break;
-                        case 5:
-                            player.pitching = (double) playerInfo;
-                            break;
-                        default:
-                            continue;
-                    }
-                    count++;
-                }
-                playerList.add(player);
+                continue;
             }
-
+            int count = 0;
+            Player player = new Player();
+            for (Object playerInfo : playerCollection){
+                count++;
+                if (count > 5) { break; }
+                switch (count){
+                    case 1:
+                        player.rank = (double) playerInfo;
+                        break;
+                    case 2:
+                        player.name = (String) playerInfo;
+                        break;
+                    case 3:
+                        player.total = (double) playerInfo;
+                        break;
+                    case 4:
+                        player.hitting = (double) playerInfo;
+                        break;
+                    case 5:
+                        player.pitching = (double) playerInfo;
+                        break;
+                }
+            }
+            playerList.add(player);
         }
 
         return playerList;
@@ -162,37 +160,15 @@ public class DataManipulator {
         }
         return players;
     }
-    public List<Player> createPlayersWithHittingSort(Map<String, Double> rank){
-        List<Player> finalResults = new ArrayList<>();
-        for (Map.Entry<String, Double> each : rank.entrySet()){
-            Player player = new Player(each.getKey(), each.getValue());
-            finalResults.add(player);
-        }
-        Collections.sort(finalResults, new Comparator<Player>() {
-            @Override
-            public int compare(Player o1, Player o2) {
-                return Double.compare(o2.hitting, o1.hitting);
-            }
-        });
-        return finalResults;
-    }
-    public List<Player> addAndSortByPitching(Map<String, Double> rank, List<Player> players){
-        for (Player player : players){
-            player.pitching = rank.get(player.name);
-        }
-        players.sort((o1, o2) -> Double.compare(o2.pitching, o1.pitching));
-        return players;
-    }
-    public List<Player> combineHittingAndPitching(List<Player> players){
+    public List<Player> calculateTotal(List<Player> players){
         for (Player player : players){
             player.total = player.hitting + player.pitching;
         }
-        players.sort((o1, o2) -> Double.compare(o2.total, o1.total));
         return players;
     }
 
-    //todo looks funny. want to recheck this
-    public void addPosition(List<Player> players){
+
+    public void calculateRank(List<Player> players){
         for (int i = 0; i < players.size(); i++){
             double start = i + 1;
             int ties = 0;
@@ -206,7 +182,6 @@ public class DataManipulator {
                 players.get(i).rank = start;
                 ties--;
             }
-            start++;
         }
     }
 
@@ -259,12 +234,16 @@ public class DataManipulator {
         oldPlayer.total_change = player.total - oldPlayer.total;
     }
 
-    public void rankPitchingPoints(List<Player> playerRanks){
+    public void sortPitching(List<Player> playerRanks){
         playerRanks.sort((o1, o2) -> Double.compare(o2.pitching, o1.pitching));
     }
 
-    public void rankHittingPoints(List<Player> playerRanks){
+    public void sortHitting(List<Player> playerRanks){
         playerRanks.sort((o1, o2) -> Double.compare(o2.hitting, o1.hitting));
+    }
+
+    public void sortTotal(List<Player> playerRanks){
+        playerRanks.sort((o1, o2) -> Double.compare(o2.total, o1.total));
     }
 
     public Map<String, List<Double>> getThePlayers() {
@@ -275,11 +254,25 @@ public class DataManipulator {
         this.thePlayers = thePlayers;
     }
 
-    public List<Rank> convertToRank(List<Player> sortedHitters, List<Player> sortedPitchers) {
+    public List<Rank> convertToRank(List<Player> players) {
+        List<Player> sortedHitters = getSortedHitting(players);
+        List<Player> sortedPitchers = getSortedPitching(players);
         List<Rank> ranks = new ArrayList<>();
+
         for (int i = 0; i < sortedHitters.size(); i++) {
             ranks.add(new Rank(i + 1, sortedHitters.get(i), sortedPitchers.get(i)));
         }
         return ranks;
     }
+
+    public List<Player> getSortedHitting(List<Player> players){
+        return players.stream()
+            .sorted((o1, o2) -> Double.compare(o2.hitting, o1.hitting))
+            .collect(Collectors.toList());
+    }
+
+    public List<Player> getSortedPitching(List<Player> players){
+        return players.stream()
+            .sorted((o1, o2) -> Double.compare(o2.pitching, o1.pitching))
+            .collect(Collectors.toList());    }
 }

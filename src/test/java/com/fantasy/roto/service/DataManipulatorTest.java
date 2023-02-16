@@ -22,8 +22,8 @@ class DataManipulatorTest {
 //
     @Test
     void calculateChangeWithDifferentName(){
-        List<Player> players = sut.combineHittingAndPitching(generateOneOffPlayersList());
-        sut.calculateChange(sut.combineHittingAndPitching(generatePlayersList()), players);
+        List<Player> players = sut.calculateTotal(generateOneOffPlayersList());
+        sut.calculateChange(sut.calculateTotal(generatePlayersList()), players);
 
         assertEquals(players.get(0).total_change, 2);
         assertEquals(players.get(0).name, "bobby");
@@ -82,7 +82,7 @@ class DataManipulatorTest {
     @Test
     void combineHittingAndPitchingIsRanked() {
         List<Player> players = generatePlayersList();
-        sut.combineHittingAndPitching(players);
+        sut.calculateTotal(players);
         assertEquals("rainmaker", players.get(0).name);
         assertEquals(51, players.get(0).total);
         assertEquals("osiris", players.get(1).name);
@@ -154,7 +154,7 @@ class DataManipulatorTest {
     @Test
     void addPosition(){
         List<Player> players = generatePlayersWithRanks();
-        sut.addPosition(players);
+        sut.calculateRank(players);
         players.stream().peek(v -> System.out.println(v.name + " - " + v.rank));
 
         assertEquals(players.get(0).rank, 1);

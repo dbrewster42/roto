@@ -3,10 +3,12 @@ package com.fantasy.roto.model;
 import com.ebay.xcelite.annotations.Column;
 import com.ebay.xcelite.annotations.Row;
 
-@Row(colsOrder = { "rank", "name", "hitting", "space", "rank", "name_", "pitching" })
+@Row(colsOrder = { "hitting_rank", "name", "hitting", "space", "pitching_rank", "name_", "pitching" })
 public class Rank {
     @Column
-    public double rank;
+    public double hitting_rank;
+    @Column
+    public double pitching_rank;
     @Column
     public String name;
     @Column
@@ -19,7 +21,8 @@ public class Rank {
     public final String space = null;
 
     public Rank(double rank, Player hitter, Player pitcher) {
-        this.rank = rank;
+        this.hitting_rank = rank;
+        this.pitching_rank = rank;
         this.name = hitter.name;
         this.hitting = hitter.hitting;
         this.name_ = pitcher.name;
