@@ -25,10 +25,10 @@ class DataManipulatorTest {
         List<Player> players = sut.combineHittingAndPitching(generateOneOffPlayersList());
         sut.calculateChange(sut.combineHittingAndPitching(generatePlayersList()), players);
 
-        assertEquals(players.get(0).totalChange, 2);
+        assertEquals(players.get(0).total_change, 2);
         assertEquals(players.get(0).name, "bobby");
         Player joe = players.stream().filter(v -> v.name.equals("joe")).findAny().orElse(null);
-        assertEquals(joe.totalChange, -4);
+        assertEquals(joe.total_change, -4);
     }
 
     @Test
@@ -36,8 +36,8 @@ class DataManipulatorTest {
         List<Player> players = generateTwoOffPlayersList();
         sut.calculateChange(generatePlayersList(), players);
 
-        assertEquals(players.get(0).totalChange, .11);
-        assertEquals(players.get(1).totalChange, .11);
+        assertEquals(players.get(0).total_change, .11);
+        assertEquals(players.get(1).total_change, .11);
     }
 
     @Test

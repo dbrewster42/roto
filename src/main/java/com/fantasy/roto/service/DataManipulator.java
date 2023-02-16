@@ -2,6 +2,7 @@ package com.fantasy.roto.service;
 
 import com.fantasy.roto.exception.PlayerNotFound;
 import com.fantasy.roto.model.Player;
+import com.fantasy.roto.model.Rank;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -229,7 +230,7 @@ public class DataManipulator {
 
     private void resolveUnmatchedPlayers(List<Player> unmatchedPlayers, List<Player> lastWeeksRanks){
         if (unmatchedPlayers.size() == 1){
-           lastWeeksRanks.stream().filter(v -> v.totalChange == .11).findAny()
+           lastWeeksRanks.stream().filter(v -> v.total_change == .11).findAny()
                    .ifPresent(o -> calculateChangeInPlayer(unmatchedPlayers.get(0), o));
         }
 //        if (unmatchedPlayers.size() == 1){
@@ -252,10 +253,10 @@ public class DataManipulator {
 //    }
 
     private void calculateChangeInPlayer(Player player, Player oldPlayer){
-        player.totalChange = player.total - oldPlayer.total;
-        player.hittingChange = player.hitting - oldPlayer.hitting;
-        player.pitchingChange = player.pitching - oldPlayer.pitching;
-        oldPlayer.totalChange = player.total - oldPlayer.total;
+        player.total_change = player.total - oldPlayer.total;
+        player.hitting_change = player.hitting - oldPlayer.hitting;
+        player.pitching_change = player.pitching - oldPlayer.pitching;
+        oldPlayer.total_change = player.total - oldPlayer.total;
     }
 
     public void rankPitchingPoints(List<Player> playerRanks){
@@ -274,4 +275,11 @@ public class DataManipulator {
         this.thePlayers = thePlayers;
     }
 
+    public List<Rank> convertToRank(List<Player> sortedHitters, List<Player> sortedPitchers) {
+        List<Rank> ranks = new ArrayList<>();
+        for (int i = 0; i < sortedHitters.size(); i++) {
+            ranks.add(new Rank(i + 1, sortedHitters.get(i), sortedPitchers.get(i)));
+        }
+        return ranks;
+    }
 }

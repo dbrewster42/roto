@@ -4,62 +4,87 @@ import com.fantasy.roto.model.Player;
 import com.fantasy.roto.service.DataManipulator;
 import com.fantasy.roto.service.Excel_IO;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class Controller {
     private final DataManipulator dataManipulator = new DataManipulator();
+    private Excel_IO excelIO;
 
-    public void run(int weekNumber){
-        Excel_IO excelIO = new Excel_IO("stats.xlsx");
+
+    public void run(){
+        excelIO = new Excel_IO("stats.xlsx");
+
         Collection<Collection<Player>> hittingCollections = excelIO.readSheet("Sheet1");
-
         Map<String, Double> playerFinalHittingRank =  rank(hittingCollections, false);
         List<Player> sortedHittingRank = dataManipulator.createPlayersWithHitting(playerFinalHittingRank);
-
 
         Collection<Collection<Player>> pitchingCollections = excelIO.readSheet("Sheet2");
         Map<String, Double> playerFinalPitchingRank = rank(pitchingCollections, true);
         List<Player> sortedPitchingRank = dataManipulator.addPitching(playerFinalPitchingRank, sortedHittingRank);
 
         List<Player> finalPlayerRanks = dataManipulator.combineHittingAndPitching(sortedPitchingRank);
-        for (Player player : finalPlayerRanks){
-            System.out.println(player.name + " \t " + player.total + " \t " + player.hitting + " \t " + player.pitching);
-        }
+//        for (Player player : finalPlayerRanks){
+//            System.out.println(player.name + " \t " + player.total + " \t " + player.hitting + " \t " + player.pitching);
+//        }
         dataManipulator.addPosition(finalPlayerRanks);
 //        double total =  finalPlayerRanks.stream().map(v -> v.total).reduce(0.0, (sum, v) -> sum += v);
 //        System.out.println();
 //        System.out.println("Total is 1260 : " + total);
 
-        compareToLastWeek(finalPlayerRanks, weekNumber);
+        compareToLastWeek(finalPlayerRanks);
 
-        excelIO.write(finalPlayerRanks, "Week" + weekNumber);
-
+        excelIO.writeRoto(finalPlayerRanks);
+        excelIO.writeRanks(dataManipulator.convertToRank(sortedHittingRank, sortedPitchingRank));
+    }
+    private void printRanks(List<Player> sortedHitters, List<Player> sortedPitchers) {
+        AtomicInteger count = new AtomicInteger(0);
+        sortedHitters.forEach(v -> System.out.println(count.incrementAndGet() + ". " + v.name + " - " + v.hitting));
+        count.set(0);
+        sortedPitchers.forEach(v -> System.out.println(count.incrementAndGet() + ". " + v.name + " - " + v.pitching));
     }
 
-//    public void writeEachRank(int weekNumber){
-////        Excel_IO excelIO = new Excel_IO("stats.xlsx");
-//        sortAndRankEachCategory()
-////        excelIO.write(finalPlayerRanks, "Week" + weekNumber);
+
+    private void parseRanks2(List<Player> sortedHitters, List<Player> sortedPitchers) {
+        AtomicInteger count = new AtomicInteger(0);
+        List<String> hitters = sortedHitters.stream()
+                .map(v -> count.incrementAndGet() +  ". " + v.name + " - " + v.hitting)
+                .collect(Collectors.toList());
+        count.set(0);
+        List<String> pitchers = sortedPitchers.stream()
+                .map(v -> count.incrementAndGet() +  ". " + v.name + " - " + v.pitching)
+                .collect(Collectors.toList());
+
+        List<List<String>> ranks = new ArrayList<>();
+        ranks.add(hitters);
+        ranks.add(pitchers);
+        excelIO.writePoints(ranks);
+    }
+
+//    private List<String> convertToString(List<Player> sortedRank) {
+//        AtomicInteger count = new AtomicInteger(0);
+//        sortedRank.stream().map(v -> count.incrementAndGet() +  ". " + v.name + " - " + v.hitting);
+//        System.out.println("Sheet has been converted into Player List ***************** ");
+//        playerRanks.forEach(v -> System.out.println(count.incrementAndGet() + ". " + v.name + " - " + v.hitting));
+//        count.set(0);
+//        dataManipulator.rankPitchingPoints(playerRanks);
+//        playerRanks.forEach(v -> System.out.println(count.incrementAndGet() + ". " + v.name + " - " + v.pitching));
 //    }
 
-    public void compareToLastWeek(List<Player> finalPlayerRanks, int weekNumber){
-        if (weekNumber == 1) { return; }
-        int lastWeek = weekNumber - 1;
+    public void compareToLastWeek(List<Player> finalPlayerRanks){
         try {
-
             Excel_IO excelIO = new Excel_IO("results.xlsx");
 
-            Collection<Collection<Player>> lastWeeksTotal = excelIO.readSheet("Week" + lastWeek);
-            System.out.println("Sheet has been read ------------------- ");
-            List<Player> lastWeeksRanks = dataManipulator.convertToPlayerList(lastWeeksTotal);
+            List<Player> lastWeeksRanks = dataManipulator.convertToPlayerList(excelIO.readSheet("Sheet"));
             System.out.println("Sheet has been converted into Player List ***************** ");
+
             dataManipulator.calculateChange(lastWeeksRanks, finalPlayerRanks);
         } catch (Exception e){
-            System.out.println("Error calculating change from last week - " + e);
-//            dataManipulator.calculateChange(finalPlayerRanks);
+            System.out.println("Error while calculating changes from last week - " + e);
         }
     }
 

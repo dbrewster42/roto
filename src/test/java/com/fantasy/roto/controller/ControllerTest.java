@@ -11,7 +11,7 @@ public class ControllerTest {
 
      @Test
      void compareToLastWeek(){
-          sut.compareToLastWeek(generatePlayersFinalRanks(), 16);
+          sut.compareToLastWeek(generatePlayersFinalRanks());
      }
 
      List<Player> generatePlayersFinalRanks(){
